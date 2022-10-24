@@ -5,7 +5,6 @@ import { makeStyles } from '@mui/styles'
 import { TextField, Card, CardActions, CardContent, CardMedia, Button, CircularProgress } from '@mui/material'
 import axios from 'axios'
 import { Web3Context } from '../providers/Web3Provider'
-
 const useStyles = makeStyles({
   root: {
     flexDirection: 'column',
@@ -32,6 +31,7 @@ export default function NFTCardCreation ({ addNFTToList }) {
   const { register, handleSubmit, reset } = useForm()
   const { nftContract } = useContext(Web3Context)
   const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState('No result');
 
   async function createNft (metadataUrl) {
     const transaction = await nftContract.mintToken(metadataUrl)

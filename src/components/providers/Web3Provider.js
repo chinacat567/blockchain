@@ -13,7 +13,8 @@ const contextDefaultValues = {
   marketplaceContract: null,
   nftContract: null,
   isReady: false,
-  hasWeb3: false
+  hasWeb3: false,
+  isVerified : true
 }
 
 const networkNames = {
@@ -33,10 +34,13 @@ export default function Web3Provider ({ children }) {
   const [marketplaceContract, setMarketplaceContract] = useState(contextDefaultValues.marketplaceContract)
   const [nftContract, setNFTContract] = useState(contextDefaultValues.nftContract)
   const [isReady, setIsReady] = useState(contextDefaultValues.isReady)
+  const [isVerified, setIsVerified] = useState(contextDefaultValues.isVerified)
 
   useEffect(() => {
     initializeWeb3()
   }, [])
+
+
 
   async function initializeWeb3WithoutSigner () {
     const alchemyProvider = new ethers.providers.AlchemyProvider(80001)
@@ -58,12 +62,13 @@ export default function Web3Provider ({ children }) {
       const provider = new ethers.providers.Web3Provider(connection, 'any')
       await getAndSetWeb3ContextWithSigner(provider)
 
-      function onAccountsChanged (accounts) {
+      async function onAccountsChanged (accounts) {
         // Workaround to accountsChanged metamask mobile bug
         if (onAccountsChangedCooldown) return
         onAccountsChangedCooldown = true
         setTimeout(() => { onAccountsChangedCooldown = false }, 1000)
         const changedAddress = ethers.utils.getAddress(accounts[0])
+        await validateUser(changedAddress)
         return getAndSetAccountAndBalance(provider, changedAddress)
       }
 
@@ -94,6 +99,7 @@ export default function Web3Provider ({ children }) {
 
   async function getAndSetAccountAndBalance (provider, address) {
     setAccount(address)
+    await validateUser(address)
     const signerBalance = await provider.getBalance(address)
     const balanceInEther = ethers.utils.formatEther(signerBalance, 'ether')
     setBalance(balanceInEther)
@@ -120,6 +126,11 @@ export default function Web3Provider ({ children }) {
     return true
   }
 
+  async function validateUser (account) {
+    const { data } = await axios(`/api/users?account=${account}`)
+    setIsVerified(data.exists)
+  }
+
   return (
     <Web3Context.Provider
       value={{
@@ -130,7 +141,8 @@ export default function Web3Provider ({ children }) {
         network,
         balance,
         initializeWeb3,
-        hasWeb3
+        hasWeb3,
+        isVerified
       }}
     >
       {children}
