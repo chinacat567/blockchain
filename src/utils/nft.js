@@ -42,6 +42,7 @@ export function mapMarketItem (marketItem, metadata, tokenId, account, hasMarket
     image: metadata.image,
     name: metadata.name,
     description: metadata.description,
+    code: metadata.code,
     hasMarketApproval: hasMarketApproval || false
   }
 }

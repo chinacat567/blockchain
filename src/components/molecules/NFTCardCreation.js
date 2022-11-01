@@ -1,10 +1,11 @@
-
 import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { makeStyles } from '@mui/styles'
-import { TextField, Card, CardActions, CardContent, CardMedia, Button, CircularProgress } from '@mui/material'
+import { Button, Card, CardActions, CardContent, CircularProgress, TextField } from '@mui/material'
 import axios from 'axios'
 import { Web3Context } from '../providers/Web3Provider'
+import QrReader from 'react-qr-scanner'
+
 const useStyles = makeStyles({
   root: {
     flexDirection: 'column',
@@ -26,30 +27,47 @@ const defaultFileUrl = 'https://miro.medium.com/max/250/1*DSNfSDcOe33E2Aup1Sww2w
 
 export default function NFTCardCreation ({ addNFTToList }) {
   const [file, setFile] = useState(null)
-  const [fileUrl, setFileUrl] = useState(defaultFileUrl)
+  const [, setFileUrl] = useState(defaultFileUrl)
   const classes = useStyles()
   const { register, handleSubmit, reset } = useForm()
   const { nftContract } = useContext(Web3Context)
   const [isLoading, setIsLoading] = useState(false)
-  const [data, setData] = useState('No result');
+  const [data, setData] = useState('No QR Code Found')
 
   async function createNft (metadataUrl) {
     const transaction = await nftContract.mintToken(metadataUrl)
     const tx = await transaction.wait()
     const event = tx.events[0]
-    const tokenId = event.args[2]
-    return tokenId
+    return event.args[2]
   }
 
-  function createNFTFormDataFile (name, description, file) {
+  function dataURLtoFile (dataurl, filename) {
+    const arr = dataurl.split(','); const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, { type: mime })
+  }
+
+  function createNFTFormDataFile (name, description, code, file) {
+    // const metadata = {
+    //   name: name,
+    //   description: body.description,
+    //   image: body.file
+    // }
     const formData = new FormData()
     formData.append('name', name)
     formData.append('description', description)
-    formData.append('file', file)
+    formData.append('code', code)
+    formData.append('file', dataURLtoFile(file, name))
     return formData
   }
 
   async function uploadFileToIPFS (formData) {
+    // for (const pair of formData.entries()) {
+    //   console.log(pair[0] + ', ' + pair[1])
+    // }
     const { data } = await axios.post('/api/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
@@ -57,17 +75,11 @@ export default function NFTCardCreation ({ addNFTToList }) {
     return data.url
   }
 
-  async function onFileChange (event) {
-    if (!event.target.files[0]) return
-    setFile(event.target.files[0])
-    setFileUrl(URL.createObjectURL(event.target.files[0]))
-  }
-
   async function onSubmit ({ name, description }) {
     try {
       if (!file || isLoading) return
       setIsLoading(true)
-      const formData = createNFTFormDataFile(name, description, file)
+      const formData = createNFTFormDataFile(name, description, data, file)
       const metadataUrl = await uploadFileToIPFS(formData)
       const tokenId = await createNft(metadataUrl)
       addNFTToList(tokenId)
@@ -82,20 +94,20 @@ export default function NFTCardCreation ({ addNFTToList }) {
 
   return (
     <Card className={classes.root} component="form" sx={{ maxWidth: 345 }} onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="file-input">
-        <CardMedia
-          className={classes.media}
-          alt='Upload image'
-          image={fileUrl}
-        />
-      </label>
-      <input
-          style={{ display: 'none' }}
-          type="file"
-          name="file"
-          id="file-input"
-          onChange={onFileChange}
-        />
+      <QrReader
+          onScan={(result) => {
+            if (result) {
+              setData(result.text)
+              setFile(result.canvas.toDataURL())
+              setFileUrl(result.text)
+            }
+          }}
+          onError={(err) => {
+            console.error(err)
+          }}
+          style={{ width: '100%' }}
+      />
+      <p>{data}</p>
       <CardContent sx={{ paddingBottom: 0 }}>
         <TextField
           id="name-input"
@@ -110,7 +122,7 @@ export default function NFTCardCreation ({ addNFTToList }) {
         />
          <TextField
           id="description-input"
-          label="Description"
+          label="description"
           name="description"
           size="small"
           multiline

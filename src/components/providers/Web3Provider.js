@@ -14,7 +14,7 @@ const contextDefaultValues = {
   nftContract: null,
   isReady: false,
   hasWeb3: false,
-  isVerified : true
+  isVerified: true
 }
 
 const networkNames = {
@@ -75,7 +75,7 @@ export default function Web3Provider ({ children }) {
       connection.on('accountsChanged', onAccountsChanged)
       connection.on('chainChanged', initializeWeb3)
     } catch (error) {
-      initializeWeb3WithoutSigner()
+      await initializeWeb3WithoutSigner()
       console.log(error)
     }
   }
@@ -101,7 +101,7 @@ export default function Web3Provider ({ children }) {
     setAccount(address)
     await validateUser(address)
     const signerBalance = await provider.getBalance(address)
-    const balanceInEther = ethers.utils.formatEther(signerBalance, 'ether')
+    const balanceInEther = ethers.utils.formatEther(signerBalance)
     setBalance(balanceInEther)
   }
 

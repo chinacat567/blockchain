@@ -21,6 +21,7 @@ handler.post(async function handlePost ({ body, files }, response) {
     const metadata = {
       name: body.name[0],
       description: body.description[0],
+      code: body.code[0],
       image: fileUrl
     }
 
