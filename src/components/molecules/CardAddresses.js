@@ -6,6 +6,7 @@ export default function CardAddresses ({ nft }) {
     <>
       <CardAddress title="Creator" address={nft.creator} />
       <CardAddress title="Owner" address={nft.owner} />
+        <CardAddress title="Barcode" address={nft.code} />
       {isAvailable && <CardAddress title="Seller" address={nft.seller} />}
     </>
   )
