@@ -30,6 +30,7 @@ contract Marketplace is ReentrancyGuard {
         uint256 price;
         bool sold;
         bool canceled;
+        bytes32 barcode;
     }
 
     event MarketItemCreated(
@@ -41,7 +42,8 @@ contract Marketplace is ReentrancyGuard {
         address owner,
         uint256 price,
         bool sold,
-        bool canceled
+        bool canceled,
+        bytes32 barcode
     );
 
     constructor() {
@@ -59,7 +61,9 @@ contract Marketplace is ReentrancyGuard {
     function createMarketItem(
         address nftContractAddress,
         uint256 tokenId,
-        uint256 price
+        uint256 price,
+        bytes32 barcode
+
     ) public payable nonReentrant returns (uint256) {
         require(price > 0, "Price must be at least 1 wei");
         require(msg.value == listingFee, "Price must be equal to listing price");
@@ -77,7 +81,8 @@ contract Marketplace is ReentrancyGuard {
             payable(address(0)),
             price,
             false,
-            false
+            false,
+            barcode
         );
 
         IERC721(nftContractAddress).transferFrom(msg.sender, address(this), tokenId);
@@ -91,7 +96,8 @@ contract Marketplace is ReentrancyGuard {
             payable(address(0)),
             price,
             false,
-            false
+            false,
+            barcode
         );
 
         return marketItemId;
@@ -257,4 +263,8 @@ contract Marketplace is ReentrancyGuard {
 
         return items;
     }
+
+//    function verifyMarketItemBarcode(uint256 marketItemId , string memory barcode) private pure returns (bool) {
+//    return compareStrings(marketItemIdToMarketItem[marketItemId].barcode, barcode);
+//    }
 }

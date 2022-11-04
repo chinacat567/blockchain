@@ -33,6 +33,7 @@ export default function NFTCardCreation ({ addNFTToList }) {
   const { nftContract } = useContext(Web3Context)
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState('No QR Code Found')
+  const [isVerifiedBarcode, setIsVerifiedBarcode] = useState(false)
 
   async function createNft (metadataUrl) {
     const transaction = await nftContract.mintToken(metadataUrl)
@@ -78,6 +79,11 @@ export default function NFTCardCreation ({ addNFTToList }) {
   async function onSubmit ({ name, description }) {
     try {
       if (!file || isLoading) return
+      await validateBarcode(data)
+      if (!isVerifiedBarcode) {
+        alert('Invalid Barcode')
+        return
+      }
       setIsLoading(true)
       const formData = createNFTFormDataFile(name, description, data, file)
       const metadataUrl = await uploadFileToIPFS(formData)
@@ -90,6 +96,12 @@ export default function NFTCardCreation ({ addNFTToList }) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  async function validateBarcode (code) {
+    console.log('code = ' + code)
+    const { data } = await axios(`/api/barcodes?barcode=${code}`)
+    setIsVerifiedBarcode(data.exists)
   }
 
   return (

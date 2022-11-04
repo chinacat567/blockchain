@@ -6,7 +6,7 @@ import { Web3Context } from '../src/components/providers/Web3Provider'
 import { mapCreatedAndOwnedTokenIdsAsMarketItems, getUniqueOwnedAndCreatedTokenIds } from '../src/utils/nft'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
 import ConnectWalletMessage from '../src/components/molecules/ConnectWalletMessage'
-import UnauthenticateUser from "../src/components/molecules/UnauthenticateUser";
+import UnauthenticatedUser from "../src/components/molecules/UnauthenticatedUser";
 
 export default function CreatorDashboard () {
   const [nfts, setNfts] = useState([])
@@ -35,7 +35,7 @@ export default function CreatorDashboard () {
   if (!hasWindowEthereum) return <InstallMetamask/>
   if (!hasWeb3) return <ConnectWalletMessage/>
   if (!network) return <UnsupportedChain/>
-  if (!isVerified) return <UnauthenticateUser/>
+  if (!isVerified) return <UnauthenticatedUser/>
   if (isLoading) return <LinearProgress/>
 
   return (
