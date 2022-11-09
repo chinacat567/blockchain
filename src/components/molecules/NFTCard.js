@@ -119,6 +119,12 @@ export default function NFTCard ({ nft, action, updateNFT }) {
     updateNFT()
     return approveTx
   }
+  function web3StringToBytes32 (text) {
+    let result = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(text))
+    while (result.length < 66) { result += '0' }
+    if (result.length !== 66) { throw new Error('invalid web3 implicit bytes32') }
+    return result
+  }
 
   async function sellNft (nft) {
     if (!newPrice) {
@@ -128,7 +134,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
     setPriceError(false)
     const listingFee = await marketplaceContract.getListingFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
-    const transaction = await marketplaceContract.createMarketItem(nftContract.address, nft.tokenId, priceInWei, { value: listingFee.toString() }, nft.code)
+    const transaction = await marketplaceContract.createMarketItem(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
     await transaction.wait()
     updateNFT()
     return transaction

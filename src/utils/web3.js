@@ -1,35 +1,34 @@
 export function getProvider () {
   if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
     if (window.ethereum.isMetaMask) return 'Metamask'
-    if (window.ethereum.isImToken) return 'imToken'
+    return 'Undefined'
   }
-  return 'Wallet'
 }
 
 export const chains = {
-  polygonMumbaiTestnet: {
-    name: 'Polygon Testnet Mumbai',
-    chain: 'Polygon',
+  goerli: {
+    name: 'Görli',
+    chain: 'ETH',
     rpc: [
-      'https://matic-mumbai.chainstacklabs.com',
-      'https://rpc-mumbai.maticvigil.com',
-      'https://matic-testnet-archive-rpc.bwarelabs.com'
+      'http://goerli.prylabs.net/',
+      'https://rpc.slock.it/goerli',
+      'http://goerli.blockscout.com/'
     ],
     faucets: [
-      'https://faucet.polygon.technology/'
+      'https://goerli-faucet.slock.it/'
     ],
     nativeCurrency: {
-      name: 'MATIC',
-      symbol: 'MATIC',
+      name: 'Görli Ether',
+      symbol: 'ETH',
       decimals: 18
     },
-    infoURL: 'https://polygon.technology/',
-    shortName: 'maticmum',
-    chainId: 80001,
-    networkId: 80001,
+    infoURL: 'https://goerli.net/#about',
+    shortName: 'gor',
+    chainId: 5,
+    networkId: 5,
     explorers: [{
-      name: 'polygonscan',
-      url: 'https://mumbai.polygonscan.com',
+      name: 'etherscan-goerli',
+      url: 'https://goerli.etherscan.io',
       standard: 'EIP3091'
     }]
   }

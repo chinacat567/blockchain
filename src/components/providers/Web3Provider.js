@@ -7,7 +7,7 @@ import axios from 'axios'
 
 const contextDefaultValues = {
   account: '',
-  network: 'maticmum',
+  network: 'goerli',
   balance: 0,
   connectWallet: () => {},
   marketplaceContract: null,
@@ -18,7 +18,7 @@ const contextDefaultValues = {
 }
 
 const networkNames = {
-  maticmum: 'MUMBAI',
+  goerli: 'GOERLI',
   unknown: 'LOCALHOST'
 }
 

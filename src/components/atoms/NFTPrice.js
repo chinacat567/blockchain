@@ -44,8 +44,8 @@ export default function NFTPrice ({ nft }) {
       >
         <span style={{ display: 'inline-block', transform: 'translateY(3px)' }}>
           <Image
-            alt='Matic'
-            src='/matic.png'
+            alt='Goerli ETH'
+            src='/goerli.png'
             width="20px"
             height="20px"
             onMouseEnter={handlePopoverOpen}

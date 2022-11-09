@@ -10,19 +10,19 @@ const toHex = (num) => {
 
 async function addNetwork (chain, account) {
   const params = {
-    chainId: toHex(chain.chainId), // A 0x-prefixed hexadecimal string
-    chainName: chain.name,
-    nativeCurrency: {
-      name: chain.nativeCurrency.name,
-      symbol: chain.nativeCurrency.symbol, // 2-6 characters long
-      decimals: chain.nativeCurrency.decimals
-    },
-    rpcUrls: chain.rpc,
-    blockExplorerUrls: [((chain.explorers && chain.explorers.length > 0 && chain.explorers[0].url) ? chain.explorers[0].url : chain.infoURL)]
+    chainId: toHex(chain.chainId) // A 0x-prefixed hexadecimal string
+    // chainName: chain.name,
+    // nativeCurrency: {
+    //   name: chain.nativeCurrency.name,
+    //   symbol: chain.nativeCurrency.symbol, // 2-6 characters long
+    //   decimals: chain.nativeCurrency.decimals
+    // },
+    // rpcUrls: chain.rpc,
+    // blockExplorerUrls: [((chain.explorers && chain.explorers.length > 0 && chain.explorers[0].url) ? chain.explorers[0].url : chain.infoURL)]
   }
 
   window.ethereum.request({
-    method: 'wallet_addEthereumChain',
+    method: 'wallet_switchEthereumChain',
     params: [params, account]
   }).catch((error) => {
     console.log(error)
@@ -36,9 +36,8 @@ export default function UnsupportedChain () {
     if (!account) return 'Connect wallet'
 
     const providerTextList = {
-      Metamask: 'Add/Change to Polygon Mumbai Testnet on Metamask',
-      imToken: 'Add/Change to Polygon Mumbai Testnet on imToken',
-      Wallet: 'Add/Change to Polygon Mumbai Testnet on Wallet'
+      Metamask: 'Add/Change to Goerli on Metamask',
+      Undefined: 'Add/Change to Goerli on Undefined Wallet'
     }
     return providerTextList[getProvider()]
   }
@@ -50,7 +49,7 @@ export default function UnsupportedChain () {
       <Button
         variant='outlined'
         color='primary'
-        onClick={ () => addNetwork(chains.polygonMumbaiTestnet, account) }
+        onClick={ () => addNetwork(chains.goerli, account) }
         sx={{
           maxWidth: 600,
           margin: 'auto',
