@@ -45,7 +45,7 @@ describe('NFT', function () {
     await nftContract.connect(account2).createMedicine('')
     await nftContract.createMedicine('')
 
-    const nftIds = await nftContract.getTokensCreatedByMe()
+    const nftIds = await nftContract.getMedicinesCreatedByMe()
 
     expect(nftIds).to.have.length(2)
 

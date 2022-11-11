@@ -25,9 +25,11 @@ export default function CreatorDashboard () {
   async function loadNFTs () {
     if (!isReady || !hasWeb3) return <></>
     const myUniqueCreatedAndOwnedTokenIds = await getUniqueOwnedAndCreatedTokenIds(nftContract)
+    // console.log("123" + myUniqueCreatedAndOwnedTokenIds)
     const myNfts = await Promise.all(myUniqueCreatedAndOwnedTokenIds.map(
       mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, nftContract, account)
     ))
+    console.log("avc" + myNfts[1].tokenId)
     setNfts(myNfts)
     setIsLoading(false)
   }

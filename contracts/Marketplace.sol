@@ -63,9 +63,9 @@ contract Marketplace  {
 
         _medicineTokenIds.increment();
 
-        address creator = Medicine(medicineContractAddress).getMedicineCreatorById(tokenId);
+        address creator = MedicineToken(medicineContractAddress).getMedicineCreatorById(tokenId);
 
-        Roles roles = Roles(payable(creator), /* creator*/
+        Roles memory roles = Roles(payable(creator), /* creator*/
             payable(msg.sender), /* seller */
             payable(address(0))); /* owner */
 
@@ -104,11 +104,11 @@ contract Marketplace  {
         uint itemId = _medicineTokenIdToMedicine[medicineTokenId].tokenId;
         require(itemId >= 1, "Item does not exists");
 
-        require(_medicineTokenIdToMedicine[medicineTokenId].seller == msg.sender, "Ony seller can cancel");
+        require(_medicineTokenIdToMedicine[medicineTokenId].roles.seller == msg.sender, "Ony seller can cancel");
 
         IERC721(medicineContractAddress).transferFrom(address(this), msg.sender, itemId);
 
-        _medicineTokenIdToMedicine[medicineTokenId].owner = payable(msg.sender);
+        _medicineTokenIdToMedicine[medicineTokenId].roles.owner = payable(msg.sender);
         _medicineTokenIdToMedicine[medicineTokenId].cancelled = true;
 
         _cancelledCounter.increment();
@@ -120,19 +120,19 @@ contract Marketplace  {
         returns (Medicine memory, string memory)
     {
         for (uint i = _medicineTokenIds.current(); i >= 1; i--) {
-            if (item.tokenId == tokenId) {
-                Medicine memory medicine = _medicineTokenIdToMedicine[i];
+            Medicine memory medicine = _medicineTokenIdToMedicine[i];
+            if (medicine.tokenId == tokenId) {
                 return (medicine, 'found');
             }
         }
 
-        Medicine memory null;
-        return (null, 'not found');
+        Medicine memory nullMedicine;
+        return (nullMedicine, 'not found');
     }
 
     /* called by the buyer */
     function sellTokenToBuyer(address medicineContractAddress, uint medicineTokenId)
-        public
+        public payable
     {
         /* sanity check on the amount received */
         require(msg.value == _medicineTokenIdToMedicine[medicineTokenId].price,
@@ -141,11 +141,11 @@ contract Marketplace  {
         uint itemId = _medicineTokenIdToMedicine[medicineTokenId].tokenId;
 
         /* transfer amount to seller from buyer  */
-        _medicineTokenIdToMedicine[medicineTokenId].seller.transfer(msg.value);
+        _medicineTokenIdToMedicine[medicineTokenId].roles.seller.transfer(msg.value);
         /* transfer token ownership */
         IERC721(medicineContractAddress).transferFrom(address(this), msg.sender, itemId);
 
-        _medicineTokenIdToMedicine[medicineTokenId].owner = payable(msg.sender);
+        _medicineTokenIdToMedicine[medicineTokenId].roles.owner = payable(msg.sender);
         _medicineTokenIdToMedicine[medicineTokenId].sold = true;
         _soldCounter.increment();
     }
@@ -160,7 +160,7 @@ contract Marketplace  {
         uint j = 0;
         for (uint i = 1; i <= _medicineTokenIds.current(); i++) {
             Medicine memory item = _medicineTokenIdToMedicine[i ];
-            if (item.owner != address(0)) continue;
+            if (item.roles.owner != address(0)) continue;
             medicines[j] = item;
             j += 1;
         }
@@ -176,13 +176,13 @@ contract Marketplace  {
     }
 
     function getAddress(Medicine memory item, string memory property)
-        private
+        private view
         returns (address)
     {
        if (compareStrings(property, "seller")) {
-           return iterm.seller;
+           return item.roles.seller;
        }
-        return item.owner;
+        return item.roles.owner;
     }
 
     function fetchSellingMedicines() public view returns (Medicine[] memory) {
@@ -221,7 +221,12 @@ contract Marketplace  {
         return medicines;
     }
 
-    function verifyMedicineBarcode(uint medicineTokenId , string memory barcode) private pure returns (bool) {
-    return compareStrings(_medicineTokenIdToMedicine[medicineTokenId].barcode, barcode);
+    function getGasValue() public view returns (uint256) {
+        uint value = 0.06 ether;
+        return value;
     }
+
+//    function verifyMedicineBarcode(uint medicineTokenId , string memory barcode) private pure returns (bool) {
+//    return compareStrings(_medicineTokenIdToMedicine[medicineTokenId].barcode, barcode);
+//    }
 }

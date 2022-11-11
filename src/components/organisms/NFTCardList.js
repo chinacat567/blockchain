@@ -38,6 +38,7 @@ export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
   }
 
   async function addNFTToList (tokenId) {
+    console.log("SDFsdf" + tokenId)
     const nft = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, nftContract, account)(tokenId)
     setNfts(prevNfts => [nft, ...prevNfts])
   }

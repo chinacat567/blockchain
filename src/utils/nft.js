@@ -30,6 +30,7 @@ export function mapCreatedAndOwnedTokenIdsAsMarketItems (marketplaceContract, nf
 }
 
 export function mapMarketItem (marketItem, metadata, tokenId, account, hasMarketApproval) {
+  console.log("asd" + tokenId)
   return {
     price: marketItem.price ? ethers.utils.formatUnits(marketItem.price, 'ether') : undefined,
     tokenId: marketItem.tokenId || tokenId,
@@ -48,7 +49,7 @@ export function mapMarketItem (marketItem, metadata, tokenId, account, hasMarket
 }
 
 export async function getUniqueOwnedAndCreatedTokenIds (nftContract) {
-  const nftIdsCreatedByMe = await nftContract.getTokensCreatedByMe()
+  const nftIdsCreatedByMe = await nftContract.getMedicinesCreatedByMe()
   const nftIdsOwnedByMe = await nftContract.getMedicinesOwnedByAddress()
   const myNftIds = [...nftIdsCreatedByMe, ...nftIdsOwnedByMe]
   return [...new Map(myNftIds.map((item) => [item._hex, item])).values()]

@@ -7,14 +7,14 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-contract Medicine is ERC721   {
+contract MedicineToken is ERC721   {
     using Counters for Counters.Counter;
 
     event MintMedicine(uint tokenId);
 
     Counters.Counter private _tokenIds;
     
-    address public _marketAddress;
+    address private _marketAddress;
 
     /* hash table for looking up creator addresses */
     mapping(uint => address) public _creators;

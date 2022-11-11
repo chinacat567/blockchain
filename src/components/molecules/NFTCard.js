@@ -72,7 +72,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
   const { name, description, image } = nft
 
   useEffect(() => {
-    getAndSetListingFee(marketplaceContract, setListingFee)
+    // getAndSetListingFee(marketplaceContract, setListingFee)
   }, [])
 
   const actions = {
@@ -89,7 +89,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
       method: approveNft
     },
     sell: {
-      text: listingFee ? `Sell (${listingFee} fee)` : 'Sell',
+      text: 'Sell',
       method: sellNft
     },
     none: {
@@ -132,9 +132,10 @@ export default function NFTCard ({ nft, action, updateNFT }) {
       return
     }
     setPriceError(false)
-    const listingFee = await marketplaceContract.getListingFee()
+    const value = await marketplaceContract.getGasValue()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
-    const transaction = await marketplaceContract.createMedicine(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
+    console.log(nft.tokenId + "value" + value.toString())
+    const transaction = await marketplaceContract.createMedicine(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: value.toString() })
     await transaction.wait()
     updateNFT()
     return transaction

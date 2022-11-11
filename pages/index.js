@@ -7,8 +7,8 @@ import { mapAvailableMarketItems } from '../src/utils/nft'
 import axios from "axios";
 import {ethers} from "ethers";
 import Market from "../artifacts/contracts/Marketplace.sol/Marketplace";
-import NFT from "../artifacts/contracts/NFT.sol/NFT";
-import UnauthenticatedUser from "../src/components/molecules/UnauthenticatedUser";
+import Medicine from "../artifacts/contracts/Medicine.sol/MedicineToken.json";
+import UnauthenticatedUser from '../src/components/molecules/UnauthenticatedUser'
 
 export default function Home () {
   const [nfts, setNfts] = useState([])
