@@ -16,22 +16,22 @@ describe('NFT', function () {
   })
 
   it("increases token's id after each mint", async function () {
-    await expect(nftContract.mintToken(''))
+    await expect(nftContract.createMedicine(''))
       .to.emit(nftContract, 'TokenMinted')
       .withArgs(1, '', marketplaceAddress)
 
-    await expect(nftContract.mintToken(''))
+    await expect(nftContract.createMedicine(''))
       .to.emit(nftContract, 'TokenMinted')
       .withArgs(2, '', marketplaceAddress)
   })
 
   it('gets token ids owned by msg.sender', async function () {
-    await nftContract.mintToken('')
-    await nftContract.connect(account2).mintToken('')
-    await nftContract.mintToken('')
+    await nftContract.createMedicine('')
+    await nftContract.connect(account2).createMedicine('')
+    await nftContract.createMedicine('')
     await nftContract.transferFrom(account1.address, account2.address, 1)
 
-    const nftIds = await nftContract.getTokensOwnedByMe()
+    const nftIds = await nftContract.getMedicinesOwnedByAddress()
 
     expect(nftIds).to.have.length(1)
 
@@ -41,9 +41,9 @@ describe('NFT', function () {
   })
 
   it('gets token ids created by msg.sender', async function () {
-    await nftContract.mintToken('')
-    await nftContract.connect(account2).mintToken('')
-    await nftContract.mintToken('')
+    await nftContract.createMedicine('')
+    await nftContract.connect(account2).createMedicine('')
+    await nftContract.createMedicine('')
 
     const nftIds = await nftContract.getTokensCreatedByMe()
 
@@ -56,7 +56,7 @@ describe('NFT', function () {
   })
 
   it('gets token creator by id', async function () {
-    await nftContract.mintToken('')
+    await nftContract.createMedicine('')
     const creator = await nftContract.getTokenCreatorById(1)
     expect(creator).to.eql(account1.address)
   })

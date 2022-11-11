@@ -36,7 +36,7 @@ export default function NFTCardCreation ({ addNFTToList }) {
   const [isVerifiedBarcode, setIsVerifiedBarcode] = useState(false)
 
   async function createNft (metadataUrl) {
-    const transaction = await nftContract.mintToken(metadataUrl)
+    const transaction = await nftContract.createMedicine(metadataUrl)
     const tx = await transaction.wait()
     const event = tx.events[0]
     return event.args[2]

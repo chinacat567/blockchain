@@ -36,7 +36,7 @@ export default function VendorCard () {
   const [data, setData] = useState('No QR Code Found')
 
   async function createNft (metadataUrl) {
-    const transaction = await nftContract.mintToken(metadataUrl, web3StringToBytes32(data))
+    const transaction = await nftContract.createMedicine(metadataUrl, web3StringToBytes32(data))
     const tx = await transaction.wait()
     const event = tx.events[0]
     return event.args[2]

@@ -100,7 +100,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
 
   async function buyNft (nft) {
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
-    const transaction = await marketplaceContract.createMarketSale(nftContract.address, nft.marketItemId, {
+    const transaction = await marketplaceContract.sellTokenToBuyer(nftContract.address, nft.marketItemId, {
       value: price
     })
     await transaction.wait()
@@ -108,7 +108,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
   }
 
   async function cancelNft (nft) {
-    const transaction = await marketplaceContract.cancelMarketItem(nftContract.address, nft.marketItemId)
+    const transaction = await marketplaceContract.cancelMedicine(nftContract.address, nft.marketItemId)
     await transaction.wait()
     updateNFT()
   }
@@ -134,7 +134,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
     setPriceError(false)
     const listingFee = await marketplaceContract.getListingFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
-    const transaction = await marketplaceContract.createMarketItem(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
+    const transaction = await marketplaceContract.createMedicine(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
     await transaction.wait()
     updateNFT()
     return transaction

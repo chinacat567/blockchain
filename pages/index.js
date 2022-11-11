@@ -20,7 +20,7 @@ export default function Home () {
   }, [isReady])
   async function loadNFTs () {
     if (!isReady) return
-    const data = await marketplaceContract.fetchAvailableMarketItems()
+    const data = await marketplaceContract.fetchUnsoldMedicines()
     const items = await Promise.all(data.map(mapAvailableMarketItems(nftContract)))
     setNfts(items)
     setIsLoading(false)
