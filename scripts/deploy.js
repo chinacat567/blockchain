@@ -22,7 +22,7 @@ async function main () {
   await marketplace.deployed()
   console.log('Marketplace deployed to:', marketplace.address)
 
-  const NFT = await hre.ethers.getContractFactory('NFT')
+  const NFT = await hre.ethers.getContractFactory('Medicine')
   const nft = await NFT.deploy(marketplace.address)
   await nft.deployed()
   console.log('Nft deployed to:', nft.address)
