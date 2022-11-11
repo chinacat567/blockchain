@@ -15,12 +15,9 @@ handler.post(async function handlePost ({ body, files }, response) {
   try {
     const { db } = await connectToDatabase()
     const data = {
-      firstName: body.firstName[0],
-      lastName: body.lastName[0],
-      governmentId: body.governmentId[0],
-      account: body.account[0]
+      barcode: body.barcode[0]
     }
-    db.collection('users').findOneAndUpdate({ account: body.account[0] }, { $set: data }, { upsert: true })
+    db.collection('barcodes').findOneAndUpdate({ barcode: body.barcode[0] }, { $set: data }, { upsert: true })
     return response.status(200).json({
       success: 'okay'
     })
