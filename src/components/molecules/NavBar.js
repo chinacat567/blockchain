@@ -22,13 +22,17 @@ const pages = [
   {
     title: 'Registration',
     href: '/registration'
+  },
+  {
+    title: 'Vendor',
+    href: '/vendor'
   }
 
 ]
 
 const NavBar = () => {
   const { account } = useContext(Web3Context)
-  const logo = '🖼️'
+  const logo = 'CSE526'
 
   return (
     <AppBar position="static">

@@ -14,7 +14,8 @@ const contextDefaultValues = {
   nftContract: null,
   isReady: false,
   hasWeb3: false,
-  isVerified: true
+  isVerified: true,
+  isVendor: false
 }
 
 const networkNames = {
@@ -35,6 +36,7 @@ export default function Web3Provider ({ children }) {
   const [nftContract, setNFTContract] = useState(contextDefaultValues.nftContract)
   const [isReady, setIsReady] = useState(contextDefaultValues.isReady)
   const [isVerified, setIsVerified] = useState(contextDefaultValues.isVerified)
+  const [isVendor, setIsVendor] = useState(contextDefaultValues.isVendor)
 
   useEffect(() => {
     initializeWeb3()
@@ -69,6 +71,7 @@ export default function Web3Provider ({ children }) {
         setTimeout(() => { onAccountsChangedCooldown = false }, 1000)
         const changedAddress = ethers.utils.getAddress(accounts[0])
         await validateUser(changedAddress)
+        await validateVendor(changedAddress)
         return getAndSetAccountAndBalance(provider, changedAddress)
       }
 
@@ -100,6 +103,7 @@ export default function Web3Provider ({ children }) {
   async function getAndSetAccountAndBalance (provider, address) {
     setAccount(address)
     await validateUser(address)
+    await validateVendor(address)
     const signerBalance = await provider.getBalance(address)
     const balanceInEther = ethers.utils.formatEther(signerBalance)
     setBalance(balanceInEther)
@@ -131,6 +135,12 @@ export default function Web3Provider ({ children }) {
     setIsVerified(data.exists)
   }
 
+  async function validateVendor (account) {
+    if (account === '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266') {
+      setIsVendor(true)
+    }
+  }
+
   return (
     <Web3Context.Provider
       value={{
@@ -142,7 +152,8 @@ export default function Web3Provider ({ children }) {
         balance,
         initializeWeb3,
         hasWeb3,
-        isVerified
+        isVerified,
+        isVendor
       }}
     >
       {children}
