@@ -79,8 +79,8 @@ export default function NFTCardCreation ({ addNFTToList }) {
   async function onSubmit ({ name, description }) {
     try {
       if (!file || isLoading) return
-      await validateBarcode(data)
-      if (!isVerifiedBarcode) {
+      const valid = await validateBarcode(data)
+      if (!valid) {
         alert('Invalid Barcode')
         return
       }
@@ -101,7 +101,7 @@ export default function NFTCardCreation ({ addNFTToList }) {
   async function validateBarcode (code) {
     console.log('code = ' + code)
     const { data } = await axios(`/api/barcodes?barcode=${code}`)
-    setIsVerifiedBarcode(data.exists)
+    return data.exists
   }
 
   return (
