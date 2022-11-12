@@ -14,7 +14,7 @@ const contextDefaultValues = {
   nftContract: null,
   isReady: false,
   hasWeb3: false,
-  isVerified: true,
+  isVerified: false,
   isVendor: false
 }
 
@@ -138,6 +138,9 @@ export default function Web3Provider ({ children }) {
   async function validateVendor (account) {
     if (account === '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266') {
       setIsVendor(true)
+    }
+    else {
+      setIsVendor(false)
     }
   }
 

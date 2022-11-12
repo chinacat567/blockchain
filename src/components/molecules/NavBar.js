@@ -16,7 +16,7 @@ const pages = [
     href: '/'
   },
   {
-    title: 'MY NFTs',
+    title: 'My Medicines',
     href: '/my-nfts'
   },
   {
