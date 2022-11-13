@@ -6,8 +6,8 @@ function replaceEnvContractAddresses (marketplaceAddress, nftAddress, networkNam
   const envFileName = '.env.local'
   const envFile = fs.readFileSync(envFileName, 'utf-8')
   const env = dotenv.parse(envFile)
-  env[`MARKETPLACE_CONTRACT_ADDRESS_${networkName}`] = marketplaceAddress
-  env[`NFT_CONTRACT_ADDRESS_${networkName}`] = nftAddress
+  env[`MARKET_CONTRACT_ADDRESS_${networkName}`] = marketplaceAddress
+  env[`MEDICINE_CONTRACT_ADDRESS_${networkName}`] = nftAddress
   const newEnv = Object.entries(env).reduce((env, [key, value]) => {
     return `${env}${key}=${value}\n`
   }, '')
@@ -22,7 +22,7 @@ async function main () {
   await marketplace.deployed()
   console.log('Marketplace deployed to:', marketplace.address)
 
-  const NFT = await hre.ethers.getContractFactory('NFT')
+  const NFT = await hre.ethers.getContractFactory('Medicine')
   const nft = await NFT.deploy(marketplace.address)
   await nft.deployed()
   console.log('Nft deployed to:', nft.address)

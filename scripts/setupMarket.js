@@ -23,8 +23,8 @@
 //
 // async function setupMarket (marketplaceAddress, nftAddress) {
 //   const networkName = hre.network.name.toUpperCase()
-//   marketplaceAddress = marketplaceAddress || process.env[`MARKETPLACE_CONTRACT_ADDRESS_${networkName}`]
-//   nftAddress = nftAddress || process.env[`NFT_CONTRACT_ADDRESS_${networkName}`]
+//   marketplaceAddress = marketplaceAddress || process.env[`MARKET_CONTRACT_ADDRESS_${networkName}`]
+//   nftAddress = nftAddress || process.env[`MEDICINE_CONTRACT_ADDRESS_${networkName}`]
 //
 //   const marketplaceContract = await hre.ethers.getContractAt('Marketplace', marketplaceAddress)
 //   const nftContract = await hre.ethers.getContractAt('NFT', nftAddress)

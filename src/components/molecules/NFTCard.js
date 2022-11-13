@@ -134,8 +134,10 @@ export default function NFTCard ({ nft, action, updateNFT }) {
     setPriceError(false)
     const listingFee = await marketplaceContract.getListingFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
+    console.log(nft.code)
     const transaction = await marketplaceContract.createMarketItem(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
     await transaction.wait()
+    console.log("t" + transaction.medicineTokenId)
     updateNFT()
     return transaction
   }

@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 export async function getTokenMetadataByTokenId (nftContract, tokenId) {
   try {
     const tokenUri = await nftContract.tokenURI(tokenId)
+    console.log("t" + tokenUri)
     const { data: metadata } = await axios.get(tokenUri)
     return metadata
   } catch (error) {
@@ -48,8 +49,8 @@ export function mapMarketItem (marketItem, metadata, tokenId, account, hasMarket
 }
 
 export async function getUniqueOwnedAndCreatedTokenIds (nftContract) {
-  const nftIdsCreatedByMe = await nftContract.getTokensCreatedByMe()
-  const nftIdsOwnedByMe = await nftContract.getTokensOwnedByMe()
+  const nftIdsCreatedByMe = await nftContract.getMedicinesCreatedBySender()
+  const nftIdsOwnedByMe = await nftContract.getMedicinesOwnedByMe()
   const myNftIds = [...nftIdsCreatedByMe, ...nftIdsOwnedByMe]
   return [...new Map(myNftIds.map((item) => [item._hex, item])).values()]
 }

@@ -25,7 +25,7 @@ describe('Marketplace', function () {
   beforeEach(deployContractsAndSetAddresses)
 
   async function mintTokenAndCreateMarketItem (tokenId, price, transactionOptions, account = owner) {
-    await nftContract.connect(account).mintToken('')
+    await nftContract.connect(account).createNewMedicine('')
     return marketplaceContract.connect(account).createMarketItem(nftContractAddress, tokenId, price, transactionOptions)
   }
 
@@ -59,7 +59,7 @@ describe('Marketplace', function () {
     const listingFee = await marketplaceContract.getListingFee()
 
     // Account1 mints two tokens and put them for sale
-    await nftContract.mintToken('')
+    await nftContract.createNewMedicine('')
     await marketplaceContract.createMarketItem(nftContractAddress, token1id, price, { value: listingFee })
 
     // Account 2 buys token 1
@@ -124,8 +124,8 @@ describe('Marketplace', function () {
     const listingFee = await marketplaceContract.getListingFee()
 
     // Account1 mints two tokens and put them for sale
-    await nftContract.mintToken('')
-    await nftContract.mintToken('')
+    await nftContract.createNewMedicine('')
+    await nftContract.createNewMedicine('')
     await marketplaceContract.createMarketItem(nftContractAddress, token1id, price, { value: listingFee })
     await marketplaceContract.createMarketItem(nftContractAddress, token2id, price, { value: listingFee })
 

@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.6.2;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./NFT.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./Medicine.sol";
+//import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Marketplace is ReentrancyGuard {
+contract Marketplace  {
     using Counters for Counters.Counter;
 
     Counters.Counter private _marketItemIds;
@@ -46,7 +47,7 @@ contract Marketplace is ReentrancyGuard {
         bytes32 barcode
     );
 
-    constructor() {
+    constructor() public {
         owner = payable(msg.sender);
     }
 
@@ -64,13 +65,13 @@ contract Marketplace is ReentrancyGuard {
         uint256 price,
         bytes32 barcode
 
-    ) public payable nonReentrant returns (uint256) {
+    ) public payable  returns (uint256) {
         require(price > 0, "Price must be at least 1 wei");
         require(msg.value == listingFee, "Price must be equal to listing price");
         _marketItemIds.increment();
         uint256 marketItemId = _marketItemIds.current();
 
-        address creator = NFT(nftContractAddress).getTokenCreatorById(tokenId);
+        address creator = Medicine(nftContractAddress).getMedicineCreator(tokenId);
 
         marketItemIdToMarketItem[marketItemId] = MarketItem(
             marketItemId,
@@ -106,7 +107,7 @@ contract Marketplace is ReentrancyGuard {
     /**
      * @dev Cancel a market item
      */
-    function cancelMarketItem(address nftContractAddress, uint256 marketItemId) public payable nonReentrant {
+    function cancelMarketItem(address nftContractAddress, uint256 marketItemId) public payable  {
         uint256 tokenId = marketItemIdToMarketItem[marketItemId].tokenId;
         require(tokenId > 0, "Market item has to exist");
 
@@ -142,7 +143,7 @@ contract Marketplace is ReentrancyGuard {
      * @dev Creates a market sale by transfering msg.sender money to the seller and NFT token from the
      * marketplace to the msg.sender. It also sends the listingFee to the marketplace owner.
      */
-    function createMarketSale(address nftContractAddress, uint256 marketItemId) public payable nonReentrant {
+    function createMarketSale(address nftContractAddress, uint256 marketItemId) public payable  {
         uint256 price = marketItemIdToMarketItem[marketItemId].price;
         uint256 tokenId = marketItemIdToMarketItem[marketItemId].tokenId;
         require(msg.value == price, "Please submit the asking price in order to continue");

@@ -6,8 +6,8 @@ import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
 import { mapAvailableMarketItems } from '../src/utils/nft'
 import axios from "axios";
 import {ethers} from "ethers";
-import Market from "../artifacts/contracts/Marketplace.sol/Marketplace";
-import NFT from "../artifacts/contracts/NFT.sol/NFT";
+import Market from "../artifacts/contracts/Marketplace.sol/Marketplace.json";
+import NFT from "../artifacts/contracts/Medicine.sol/Medicine";
 import UnauthenticatedUser from "../src/components/molecules/UnauthenticatedUser";
 
 export default function Home () {

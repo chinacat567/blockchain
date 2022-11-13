@@ -36,9 +36,11 @@ export default function NFTCardCreation ({ addNFTToList }) {
   const [isVerifiedBarcode, setIsVerifiedBarcode] = useState(false)
 
   async function createNft (metadataUrl) {
-    const transaction = await nftContract.mintToken(metadataUrl)
+    const transaction = await nftContract.createNewMedicine(metadataUrl)
     const tx = await transaction.wait()
+    console.log(tx.events[0])
     const event = tx.events[0]
+    console.log(event.args[2])
     return event.args[2]
   }
 
@@ -73,6 +75,7 @@ export default function NFTCardCreation ({ addNFTToList }) {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
 
+    console.log("d" + data)
     return data.url
   }
 
