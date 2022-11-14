@@ -8,7 +8,7 @@ import MedicineCardCreation from '../molecules/MedicineCardCreation'
 import { ethers } from 'ethers'
 import { Web3Context } from '../providers/Web3Provider'
 import { useContext } from 'react'
-import { mapCreatedAndOwnedTokenIdsAsMarketItems } from '../../utils/nft'
+import { mapCreatedAndOwnedTokenIdsAsMarketItems } from '../../utils/medicine'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -28,7 +28,7 @@ export default function MedicineCardList ({ medicines, setMedicines, createMedic
   const classes = useStyles()
   const { metaMaskAccount, marketplaceContract, medicineContract } = useContext(Web3Context)
 
-  async function updateNFT (index, tokenId) {
+  async function updateMedicine (index, tokenId) {
     const updatedNFt = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
     setMedicines(prevMedicines => {
       const updatedMedicines = [...prevMedicines]
@@ -37,30 +37,30 @@ export default function MedicineCardList ({ medicines, setMedicines, createMedic
     })
   }
 
-  async function addNFTToList (tokenId) {
+  async function insertMedicine (tokenId) {
     const item = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
     setMedicines(prevMedicines => [item, ...prevMedicines])
   }
 
-  function NFT ({ medicine, index }) {
+  function Medicine ({ medicine, index }) {
     if (!medicine.owner) {
-      return <MedicineCardCreation addNFTToList={addNFTToList}/>
+      return <MedicineCardCreation insertMedicine={insertMedicine}/>
     }
 
     if (medicine.owner === metaMaskAccount && medicine.marketItemId && !medicine.hasMarketApproval) {
-      return <MedicineCard medicine={medicine} action="approve" updateNFT={() => updateNFT(index, medicine.tokenId)}/>
+      return <MedicineCard medicine={medicine} action="approve" updateMedicine={() => updateMedicine(index, medicine.tokenId)}/>
     }
 
     if (medicine.owner === metaMaskAccount) {
-      return <MedicineCard medicine={medicine} action="sell" updateNFT={() => updateNFT(index, medicine.tokenId)}/>
+      return <MedicineCard medicine={medicine} action="sell" updateMedicine={() => updateMedicine(index, medicine.tokenId)}/>
     }
 
     if (medicine.seller === metaMaskAccount && !medicine.sold) {
-      return <MedicineCard medicine={medicine} action="cancel" updateNFT={() => updateNFT(index, medicine.tokenId)} />
+      return <MedicineCard medicine={medicine} action="cancel" updateMedicine={() => updateMedicine(index, medicine.tokenId)} />
     }
 
     if (medicine.owner === ethers.constants.AddressZero) {
-      return <MedicineCard medicine={medicine} action="buy" updateNFT={() => updateNFT(index, medicine.tokenId)} />
+      return <MedicineCard medicine={medicine} action="buy" updateMedicine={() => updateMedicine(index, medicine.tokenId)} />
     }
 
     return <MedicineCard medicine={medicine} action="none"/>
@@ -73,12 +73,12 @@ export default function MedicineCardList ({ medicines, setMedicines, createMedic
     >
       <Grid container className={classes.grid} id="grid">
         {createMedicine && <Grid item xs={12} sm={6} md={3} className={classes.gridItem}>
-          <MedicineCardCreation addNFTToList={addNFTToList}/>
+          <MedicineCardCreation insertMedicine={insertMedicine}/>
         </Grid>}
         {medicines.map((medicine, i) =>
           <Fade in={true} key={i}>
             <Grid item xs={12} sm={6} md={3} className={classes.gridItem} >
-                <NFT medicine={medicine} index={i} />
+                <Medicine medicine={medicine} index={i} />
             </Grid>
           </Fade>
         )}

@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import InstallMetamask from '../src/components/molecules/InstallMetamask'
 import MedicineCardList from '../src/components/organisms/MedicineCardList'
 import { Web3Context } from '../src/components/providers/Web3Provider'
-import { mapCreatedAndOwnedTokenIdsAsMarketItems, getUniqueOwnedAndCreatedTokenIds } from '../src/utils/nft'
+import { mapCreatedAndOwnedTokenIdsAsMarketItems, getUniqueOwnedAndCreatedTokenIds } from '../src/utils/medicine'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
 import ConnectWalletMessage from '../src/components/molecules/ConnectWalletMessage'
 import UnauthenticatedUser from "../src/components/molecules/UnauthenticatedUser";

@@ -2,8 +2,8 @@ import { Popover, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useState } from 'react'
 
-function getPriceText (nft) {
-  const { sold, canceled } = nft
+function getPriceText (medicine) {
+  const { sold, canceled } = medicine
   if (sold) {
     return 'Sold for'
   }
@@ -15,8 +15,8 @@ function getPriceText (nft) {
   return 'Price'
 }
 
-export default function MedicinePrice ({ nft }) {
-  const priceText = getPriceText(nft)
+export default function MedicinePrice ({ medicine }) {
+  const priceText = getPriceText(medicine)
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handlePopoverOpen = (event) => {
@@ -72,7 +72,7 @@ export default function MedicinePrice ({ nft }) {
         >
           <Typography sx={{ p: 1 }}>Matic</Typography>
         </Popover>
-        {' '}{nft.price}
+        {' '}{medicine.price}
       </Typography>
     </div>
   )

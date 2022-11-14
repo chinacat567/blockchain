@@ -3,7 +3,7 @@ import MedicineCardList from '../src/components/organisms/MedicineCardList'
 import { Web3Context } from '../src/components/providers/Web3Provider'
 import { LinearProgress } from '@mui/material'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
-import { mapAvailableMarketItems } from '../src/utils/nft'
+import { mapAvailableMarketItems } from '../src/utils/medicine'
 import UnauthenticatedUser from '../src/components/molecules/UnauthenticatedUser'
 
 export default function Home () {

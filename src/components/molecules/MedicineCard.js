@@ -60,7 +60,7 @@ async function getAndSetListingFee (marketplaceContract, setListingFee) {
   setListingFee(ethers.utils.formatUnits(listingFee, 'ether'))
 }
 
-export default function MedicineCard ({ nft, action, updateNFT }) {
+export default function MedicineCard ({ medicine, action, updateMedicine }) {
   const { setModalNFT, setIsModalOpen } = useContext(NFTModalContext)
   const { medicineContract, marketplaceContract, web3Flag } = useContext(Web3Context)
   const [isHovered, setIsHovered] = useState(false)
@@ -69,7 +69,7 @@ export default function MedicineCard ({ nft, action, updateNFT }) {
   const [priceError, setPriceError] = useState(false)
   const [newPrice, setPrice] = useState(0)
   const classes = useStyles()
-  const { name, description, image } = nft
+  const { name, description, image } = medicine
 
   useEffect(() => {
     getAndSetListingFee(marketplaceContract, setListingFee)
@@ -78,19 +78,19 @@ export default function MedicineCard ({ nft, action, updateNFT }) {
   const actions = {
     buy: {
       text: 'buy',
-      method: buyNft
+      method: buyMedicine
     },
     cancel: {
       text: 'cancel',
-      method: cancelNft
+      method: cancelMedicine
     },
     approve: {
       text: 'Approve for selling',
-      method: approveNft
+      method: approveMedicine
     },
     sell: {
-      text: listingFee ? `Sell (${listingFee} fee)` : 'Sell',
-      method: sellNft
+      text: 'Sell',
+      method: sellMedicine
     },
     none: {
       text: '',
@@ -98,25 +98,25 @@ export default function MedicineCard ({ nft, action, updateNFT }) {
     }
   }
 
-  async function buyNft (nft) {
-    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
-    const transaction = await marketplaceContract.createMarketSale(medicineContract.address, nft.marketItemId, {
+  async function buyMedicine (medicine) {
+    const price = ethers.utils.parseUnits(medicine.price.toString(), 'ether')
+    const transaction = await marketplaceContract.createMarketSale(medicineContract.address, medicine.marketItemId, {
       value: price
     })
     await transaction.wait()
-    updateNFT()
+    updateMedicine()
   }
 
-  async function cancelNft (nft) {
-    const transaction = await marketplaceContract.cancelMarketItem(medicineContract.address, nft.marketItemId)
+  async function cancelMedicine (medicine) {
+    const transaction = await marketplaceContract.cancelMarketItem(medicineContract.address, medicine.marketItemId)
     await transaction.wait()
-    updateNFT()
+    updateMedicine()
   }
 
-  async function approveNft (nft) {
-    const approveTx = await medicineContract.approve(marketplaceContract.address, nft.tokenId)
+  async function approveMedicine (medicine) {
+    const approveTx = await medicineContract.approve(marketplaceContract.address, medicine.tokenId)
     await approveTx.wait()
-    updateNFT()
+    updateMedicine()
     return approveTx
   }
   function web3StringToBytes32 (text) {
@@ -126,7 +126,7 @@ export default function MedicineCard ({ nft, action, updateNFT }) {
     return result
   }
 
-  async function sellNft (nft) {
+  async function sellMedicine (medicine) {
     if (!newPrice) {
       setPriceError(true)
       return
@@ -134,23 +134,21 @@ export default function MedicineCard ({ nft, action, updateNFT }) {
     setPriceError(false)
     const listingFee = await marketplaceContract.getListingFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
-    console.log(nft.code)
-    const transaction = await marketplaceContract.createMarketItem(medicineContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
+    const transaction = await marketplaceContract.createMarketItem(medicineContract.address, medicine.tokenId, priceInWei, web3StringToBytes32(medicine.code), { value: listingFee.toString() })
     await transaction.wait()
-    console.log("t" + transaction.medicineTokenId)
-    updateNFT()
+    updateMedicine()
     return transaction
   }
 
   function handleCardImageClick () {
-    setModalNFT(nft)
+    setModalNFT(medicine)
     setIsModalOpen(true)
   }
 
-  async function onClick (nft) {
+  async function onClick (medicine) {
     try {
       setIsLoading(true)
-      await actions[action].method(nft)
+      await actions[action].method(medicine)
     } catch (error) {
       console.log(error)
     } finally {
@@ -178,19 +176,19 @@ export default function MedicineCard ({ nft, action, updateNFT }) {
         <Divider className={classes.firstDivider} />
         <Box className={classes.addressesAndPrice}>
           <div className={classes.addessesContainer}>
-            <CardAddresses nft={nft} />
+            <CardAddresses medicine={medicine} />
           </div>
           <div className={classes.priceContainer}>
             {action === 'sell'
               ? <PriceTextField listingFee={listingFee} error={priceError} disabled={isLoading} onChange={e => setPrice(e.target.value)}/>
-              : <MedicinePrice nft={nft}/>
+              : <MedicinePrice medicine={medicine}/>
             }
           </div>
         </Box>
         <Divider className={classes.lastDivider} />
       </CardContent>
       <CardActions className={classes.cardActions}>
-        <Button size="small" onClick={() => !isLoading && onClick(nft)}>
+        <Button size="small" onClick={() => !isLoading && onClick(medicine)}>
           {isLoading
             ? <CircularProgress size="20px" />
             : web3Flag && actions[action].text

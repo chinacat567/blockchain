@@ -4,7 +4,6 @@ import { ethers } from 'ethers'
 export async function getTokenMetadataByTokenId (nftContract, tokenId) {
   try {
     const tokenUri = await nftContract.tokenURI(tokenId)
-    console.log("t" + tokenUri)
     const { data: metadata } = await axios.get(tokenUri)
     return metadata
   } catch (error) {

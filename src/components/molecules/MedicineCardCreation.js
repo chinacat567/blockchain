@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 
 const defaultFileUrl = 'https://miro.medium.com/max/250/1*DSNfSDcOe33E2Aup1Sww2w.jpeg'
 
-export default function MedicineCardCreation ({ addNFTToList }) {
+export default function MedicineCardCreation ({ insertMedicine }) {
   const [file, setFile] = useState(null)
   const [, setFileUrl] = useState(defaultFileUrl)
   const classes = useStyles()
@@ -34,7 +34,7 @@ export default function MedicineCardCreation ({ addNFTToList }) {
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState('No QR Code Found')
 
-  async function createNft (metadataUrl) {
+  async function createMedicine (metadataUrl) {
     const transaction = await medicineContract.createNewMedicine(metadataUrl)
     const tx = await transaction.wait()
     console.log(tx.events[0])
@@ -53,11 +53,6 @@ export default function MedicineCardCreation ({ addNFTToList }) {
   }
 
   function createNFTFormDataFile (name, description, code, file) {
-    // const metadata = {
-    //   name: name,
-    //   description: body.description,
-    //   image: body.file
-    // }
     const formData = new FormData()
     formData.append('name', name)
     formData.append('description', description)
@@ -74,7 +69,6 @@ export default function MedicineCardCreation ({ addNFTToList }) {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
 
-    console.log("d" + data)
     return data.url
   }
 
@@ -89,8 +83,8 @@ export default function MedicineCardCreation ({ addNFTToList }) {
       setIsLoading(true)
       const formData = createNFTFormDataFile(name, description, data, file)
       const metadataUrl = await uploadFileToIPFS(formData)
-      const tokenId = await createNft(metadataUrl)
-      addNFTToList(tokenId)
+      const tokenId = await createMedicine(metadataUrl)
+      insertMedicine(tokenId)
       setFileUrl(defaultFileUrl)
       reset()
     } catch (error) {

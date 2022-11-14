@@ -1,10 +1,8 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.2;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./Medicine.sol";
-//import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Marketplace  {
@@ -16,7 +14,6 @@ contract Marketplace  {
 
     address payable private owner;
 
-    // Challenge: make this price dynamic according to the current currency price
     uint256 private listingFee = 0.045 ether;
 
     mapping(uint256 => MarketItem) private marketItemIdToMarketItem;
