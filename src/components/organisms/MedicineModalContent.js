@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function NFTModalContent ({ nft, onClick }) {
+export default function MedicineModalContent ({ nft, onClick }) {
   const classes = useStyles()
 
   return (

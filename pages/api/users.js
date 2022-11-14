@@ -11,7 +11,7 @@ export default async function handler (req, res) {
     .findOne(query)
 
   if (users) {
-    console.log('user found') // print out what it sends back
+    console.log('user found')
     exists = true
   } else {
     console.log('not found')

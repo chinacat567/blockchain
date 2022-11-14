@@ -1,7 +1,7 @@
 import { LinearProgress } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import InstallMetamask from '../src/components/molecules/InstallMetamask'
-import NFTCardList from '../src/components/organisms/NFTCardList'
+import MedicineCardList from '../src/components/organisms/MedicineCardList'
 import { Web3Context } from '../src/components/providers/Web3Provider'
 import { mapCreatedAndOwnedTokenIdsAsMarketItems, getUniqueOwnedAndCreatedTokenIds } from '../src/utils/nft'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
@@ -39,6 +39,6 @@ export default function CreatorDashboard () {
   if (isLoading) return <LinearProgress/>
 
   return (
-    <NFTCardList nfts={nfts} setNfts={setNfts} withCreateNFT={true}/>
+    <MedicineCardList nfts={nfts} setNfts={setNfts} withCreateNFT={true}/>
   )
 }

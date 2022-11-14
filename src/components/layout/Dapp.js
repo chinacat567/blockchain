@@ -1,16 +1,16 @@
 import { useContext } from 'react'
 import NavBar from '../molecules/NavBar'
-import NFTModal from '../organisms/NFTModal'
-import NFTModalProvider from '../providers/NFTModalProvider'
+import MedicineModal from '../organisms/MedicineModal'
+import MedicineModalProvider from '../providers/MedicineModalProvider'
 
 export default function BaseLayout ({ children }) {
   return (
     <>
-      <NFTModalProvider>
+      <MedicineModalProvider>
         <NavBar/>
         {children}
-        <NFTModal/>
-      </NFTModalProvider>
+        <MedicineModal/>
+      </MedicineModalProvider>
     </>
   )
 }

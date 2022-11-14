@@ -3,11 +3,11 @@ import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles'
 import { Card, CardActions, CardContent, CardMedia, Button, Divider, Box, CircularProgress } from '@mui/material'
-import { NFTModalContext } from '../providers/NFTModalProvider'
+import { NFTModalContext } from '../providers/MedicineModalProvider'
 import { Web3Context } from '../providers/Web3Provider'
-import NFTDescription from '../atoms/NFTDescription'
-import NFTPrice from '../atoms/NFTPrice'
-import NFTName from '../atoms/NFTName'
+import MedicineDescription from '../atoms/MedicineDescription'
+import MedicinePrice from '../atoms/MedicinePrice'
+import MedicineName from '../atoms/MedicineName'
 import CardAddresses from './CardAddresses'
 import PriceTextField from '../atoms/PriceTextField'
 
@@ -60,7 +60,7 @@ async function getAndSetListingFee (marketplaceContract, setListingFee) {
   setListingFee(ethers.utils.formatUnits(listingFee, 'ether'))
 }
 
-export default function NFTCard ({ nft, action, updateNFT }) {
+export default function MedicineCard ({ nft, action, updateNFT }) {
   const { setModalNFT, setIsModalOpen } = useContext(NFTModalContext)
   const { medicineContract, marketplaceContract, web3Flag } = useContext(Web3Context)
   const [isHovered, setIsHovered] = useState(false)
@@ -173,8 +173,8 @@ export default function NFTCard ({ nft, action, updateNFT }) {
       />
 
       <CardContent className={classes.cardContent} >
-        <NFTName name={name}/>
-        <NFTDescription description={description} />
+        <MedicineName name={name}/>
+        <MedicineDescription description={description} />
         <Divider className={classes.firstDivider} />
         <Box className={classes.addressesAndPrice}>
           <div className={classes.addessesContainer}>
@@ -183,7 +183,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
           <div className={classes.priceContainer}>
             {action === 'sell'
               ? <PriceTextField listingFee={listingFee} error={priceError} disabled={isLoading} onChange={e => setPrice(e.target.value)}/>
-              : <NFTPrice nft={nft}/>
+              : <MedicinePrice nft={nft}/>
             }
           </div>
         </Box>

@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 
 const defaultFileUrl = 'https://miro.medium.com/max/250/1*DSNfSDcOe33E2Aup1Sww2w.jpeg'
 
-export default function NFTCardCreation ({ addNFTToList }) {
+export default function MedicineCardCreation ({ addNFTToList }) {
   const [file, setFile] = useState(null)
   const [, setFileUrl] = useState(defaultFileUrl)
   const classes = useStyles()

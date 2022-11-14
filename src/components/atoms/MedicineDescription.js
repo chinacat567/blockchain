@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material'
 
-export default function NFTDescription ({ description }) {
+export default function MedicineDescription ({ description }) {
   return (
     <Typography
       variant="body2"

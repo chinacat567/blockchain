@@ -11,7 +11,7 @@ export const NFTModalContext = createContext(
   contextDefaultValues
 )
 
-export default function NFTModalProvider ({ children }) {
+export default function MedicineModalProvider ({ children }) {
   const [modalNFT, setModalNFT] = useState(contextDefaultValues.modalNFT)
   const [isModalOpen, setIsModalOpen] = useState(contextDefaultValues.isModalOpen)
 

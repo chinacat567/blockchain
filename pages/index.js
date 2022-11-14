@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import NFTCardList from '../src/components/organisms/NFTCardList'
+import MedicineCardList from '../src/components/organisms/MedicineCardList'
 import { Web3Context } from '../src/components/providers/Web3Provider'
 import { LinearProgress } from '@mui/material'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
@@ -26,6 +26,6 @@ export default function Home () {
   if (loadingMedicines) return <LinearProgress/>
   if (!loadingMedicines && !medicines.length) return <h1>No Medicines For Sale</h1>
   return (
-    <NFTCardList nfts={medicines} setNfts={setMedicines} withCreateNFT={false}/>
+    <MedicineCardList nfts={medicines} setNfts={setMedicines} withCreateNFT={false}/>
   )
 }

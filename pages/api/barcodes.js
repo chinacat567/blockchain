@@ -11,7 +11,7 @@ export default async function handler (req, res) {
     .findOne(query)
 
   if (users) {
-    console.log('barcode found') // print out what it sends back
+    console.log('barcode found')
     exists = true
   } else {
     console.log('barcode not found')

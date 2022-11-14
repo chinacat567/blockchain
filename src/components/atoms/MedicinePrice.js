@@ -15,7 +15,7 @@ function getPriceText (nft) {
   return 'Price'
 }
 
-export default function NFTPrice ({ nft }) {
+export default function MedicinePrice ({ nft }) {
   const priceText = getPriceText(nft)
   const [anchorEl, setAnchorEl] = useState(null)
 

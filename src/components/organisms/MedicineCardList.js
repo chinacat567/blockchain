@@ -3,8 +3,8 @@ import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Fade from '@mui/material/Fade'
 import { makeStyles } from '@mui/styles'
-import NFTCard from '../molecules/NFTCard'
-import NFTCardCreation from '../molecules/NFTCardCreation'
+import MedicineCard from '../molecules/MedicineCard'
+import MedicineCardCreation from '../molecules/MedicineCardCreation'
 import { ethers } from 'ethers'
 import { Web3Context } from '../providers/Web3Provider'
 import { useContext } from 'react'
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
+export default function MedicineCardList ({ nfts, setNfts, withCreateNFT }) {
   const classes = useStyles()
   const { metaMaskAccount, marketplaceContract, medicineContract } = useContext(Web3Context)
 
@@ -44,26 +44,26 @@ export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
 
   function NFT ({ nft, index }) {
     if (!nft.owner) {
-      return <NFTCardCreation addNFTToList={addNFTToList}/>
+      return <MedicineCardCreation addNFTToList={addNFTToList}/>
     }
 
     if (nft.owner === metaMaskAccount && nft.marketItemId && !nft.hasMarketApproval) {
-      return <NFTCard nft={nft} action="approve" updateNFT={() => updateNFT(index, nft.tokenId)}/>
+      return <MedicineCard nft={nft} action="approve" updateNFT={() => updateNFT(index, nft.tokenId)}/>
     }
 
     if (nft.owner === metaMaskAccount) {
-      return <NFTCard nft={nft} action="sell" updateNFT={() => updateNFT(index, nft.tokenId)}/>
+      return <MedicineCard nft={nft} action="sell" updateNFT={() => updateNFT(index, nft.tokenId)}/>
     }
 
     if (nft.seller === metaMaskAccount && !nft.sold) {
-      return <NFTCard nft={nft} action="cancel" updateNFT={() => updateNFT(index, nft.tokenId)} />
+      return <MedicineCard nft={nft} action="cancel" updateNFT={() => updateNFT(index, nft.tokenId)} />
     }
 
     if (nft.owner === ethers.constants.AddressZero) {
-      return <NFTCard nft={nft} action="buy" updateNFT={() => updateNFT(index, nft.tokenId)} />
+      return <MedicineCard nft={nft} action="buy" updateNFT={() => updateNFT(index, nft.tokenId)} />
     }
 
-    return <NFTCard nft={nft} action="none"/>
+    return <MedicineCard nft={nft} action="none"/>
   }
 
   return (
@@ -73,7 +73,7 @@ export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
     >
       <Grid container className={classes.grid} id="grid">
         {withCreateNFT && <Grid item xs={12} sm={6} md={3} className={classes.gridItem}>
-          <NFTCardCreation addNFTToList={addNFTToList}/>
+          <MedicineCardCreation addNFTToList={addNFTToList}/>
         </Grid>}
         {nfts.map((nft, i) =>
           <Fade in={true} key={i}>

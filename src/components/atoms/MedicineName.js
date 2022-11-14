@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material'
 
-export default function NFTName ({ name }) {
+export default function MedicineName ({ name }) {
   return (
     <Typography
       gutterBottom
