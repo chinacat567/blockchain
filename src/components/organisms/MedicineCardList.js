@@ -24,61 +24,61 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function MedicineCardList ({ nfts, setNfts, withCreateNFT }) {
+export default function MedicineCardList ({ medicines, setMedicines, createMedicine }) {
   const classes = useStyles()
   const { metaMaskAccount, marketplaceContract, medicineContract } = useContext(Web3Context)
 
   async function updateNFT (index, tokenId) {
     const updatedNFt = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
-    setNfts(prevNfts => {
-      const updatedNfts = [...prevNfts]
-      updatedNfts[index] = updatedNFt
-      return updatedNfts
+    setMedicines(prevMedicines => {
+      const updatedMedicines = [...prevMedicines]
+      updatedMedicines[index] = updatedNFt
+      return updatedMedicines
     })
   }
 
   async function addNFTToList (tokenId) {
-    const nft = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
-    setNfts(prevNfts => [nft, ...prevNfts])
+    const item = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
+    setMedicines(prevMedicines => [item, ...prevMedicines])
   }
 
-  function NFT ({ nft, index }) {
-    if (!nft.owner) {
+  function NFT ({ medicine, index }) {
+    if (!medicine.owner) {
       return <MedicineCardCreation addNFTToList={addNFTToList}/>
     }
 
-    if (nft.owner === metaMaskAccount && nft.marketItemId && !nft.hasMarketApproval) {
-      return <MedicineCard nft={nft} action="approve" updateNFT={() => updateNFT(index, nft.tokenId)}/>
+    if (medicine.owner === metaMaskAccount && medicine.marketItemId && !medicine.hasMarketApproval) {
+      return <MedicineCard medicine={medicine} action="approve" updateNFT={() => updateNFT(index, medicine.tokenId)}/>
     }
 
-    if (nft.owner === metaMaskAccount) {
-      return <MedicineCard nft={nft} action="sell" updateNFT={() => updateNFT(index, nft.tokenId)}/>
+    if (medicine.owner === metaMaskAccount) {
+      return <MedicineCard medicine={medicine} action="sell" updateNFT={() => updateNFT(index, medicine.tokenId)}/>
     }
 
-    if (nft.seller === metaMaskAccount && !nft.sold) {
-      return <MedicineCard nft={nft} action="cancel" updateNFT={() => updateNFT(index, nft.tokenId)} />
+    if (medicine.seller === metaMaskAccount && !medicine.sold) {
+      return <MedicineCard medicine={medicine} action="cancel" updateNFT={() => updateNFT(index, medicine.tokenId)} />
     }
 
-    if (nft.owner === ethers.constants.AddressZero) {
-      return <MedicineCard nft={nft} action="buy" updateNFT={() => updateNFT(index, nft.tokenId)} />
+    if (medicine.owner === ethers.constants.AddressZero) {
+      return <MedicineCard medicine={medicine} action="buy" updateNFT={() => updateNFT(index, medicine.tokenId)} />
     }
 
-    return <MedicineCard nft={nft} action="none"/>
+    return <MedicineCard medicine={medicine} action="none"/>
   }
 
   return (
     <InfiniteScroll
-      dataLength={nfts.length}
+      dataLength={medicines.length}
       loader={<LinearProgress />}
     >
       <Grid container className={classes.grid} id="grid">
-        {withCreateNFT && <Grid item xs={12} sm={6} md={3} className={classes.gridItem}>
+        {createMedicine && <Grid item xs={12} sm={6} md={3} className={classes.gridItem}>
           <MedicineCardCreation addNFTToList={addNFTToList}/>
         </Grid>}
-        {nfts.map((nft, i) =>
+        {medicines.map((medicine, i) =>
           <Fade in={true} key={i}>
             <Grid item xs={12} sm={6} md={3} className={classes.gridItem} >
-                <NFT nft={nft} index={i} />
+                <NFT medicine={medicine} index={i} />
             </Grid>
           </Fade>
         )}

@@ -26,6 +26,6 @@ export default function Home () {
   if (loadingMedicines) return <LinearProgress/>
   if (!loadingMedicines && !medicines.length) return <h1>No Medicines For Sale</h1>
   return (
-    <MedicineCardList nfts={medicines} setNfts={setMedicines} withCreateNFT={false}/>
+    <MedicineCardList medicines={medicines} setMedicines={setMedicines} createMedicine={false}/>
   )
 }
