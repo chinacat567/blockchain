@@ -14,31 +14,31 @@ contract Marketplace  {
 
     address payable private owner;
 
-    uint256 private listingFee = 0.045 ether;
+    uint private listingFee = 0.045 ether;
 
-    mapping(uint256 => MarketItem) private marketItemIdToMarketItem;
+    mapping(uint => MarketItem) private marketItemIdToMarketItem;
 
     struct MarketItem {
-        uint256 marketItemId;
+        uint marketItemId;
         address nftContractAddress;
-        uint256 tokenId;
+        uint tokenId;
         address payable creator;
         address payable seller;
         address payable owner;
-        uint256 price;
+        uint price;
         bool sold;
         bool canceled;
         bytes32 barcode;
     }
 
     event MarketItemCreated(
-        uint256 indexed marketItemId,
+        uint indexed marketItemId,
         address indexed nftContract,
-        uint256 indexed tokenId,
+        uint indexed tokenId,
         address creator,
         address seller,
         address owner,
-        uint256 price,
+        uint price,
         bool sold,
         bool canceled,
         bytes32 barcode
@@ -48,7 +48,7 @@ contract Marketplace  {
         owner = payable(msg.sender);
     }
 
-    function getListingFee() public view returns (uint256) {
+    function getListingFee() public view returns (uint) {
         return listingFee;
     }
 
@@ -58,15 +58,15 @@ contract Marketplace  {
      */
     function createMarketItem(
         address nftContractAddress,
-        uint256 tokenId,
-        uint256 price,
+        uint tokenId,
+        uint price,
         bytes32 barcode
 
-    ) public payable  returns (uint256) {
+    ) public payable  returns (uint) {
         require(price > 0, "Price must be at least 1 wei");
         require(msg.value == listingFee, "Price must be equal to listing price");
         _marketItemIds.increment();
-        uint256 marketItemId = _marketItemIds.current();
+        uint marketItemId = _marketItemIds.current();
 
         address creator = Medicine(nftContractAddress).getMedicineCreator(tokenId);
 
@@ -104,8 +104,8 @@ contract Marketplace  {
     /**
      * @dev Cancel a market item
      */
-    function cancelMarketItem(address nftContractAddress, uint256 marketItemId) public payable  {
-        uint256 tokenId = marketItemIdToMarketItem[marketItemId].tokenId;
+    function cancelMarketItem(address nftContractAddress, uint marketItemId) public payable  {
+        uint tokenId = marketItemIdToMarketItem[marketItemId].tokenId;
         require(tokenId > 0, "Market item has to exist");
 
         require(marketItemIdToMarketItem[marketItemId].seller == msg.sender, "You are not the seller");
@@ -121,10 +121,10 @@ contract Marketplace  {
     /**
      * @dev Get Latest Market Item by the token id
      */
-    function getLatestMarketItemByTokenId(uint256 tokenId) public view returns (MarketItem memory, bool) {
-        uint256 itemsCount = _marketItemIds.current();
+    function getLatestMarketItemByTokenId(uint tokenId) public view returns (MarketItem memory, bool) {
+        uint itemsCount = _marketItemIds.current();
 
-        for (uint256 i = itemsCount; i > 0; i--) {
+        for (uint i = itemsCount; i > 0; i--) {
             MarketItem memory item = marketItemIdToMarketItem[i];
             if (item.tokenId != tokenId) continue;
             return (item, true);
@@ -140,9 +140,9 @@ contract Marketplace  {
      * @dev Creates a market sale by transfering msg.sender money to the seller and NFT token from the
      * marketplace to the msg.sender. It also sends the listingFee to the marketplace owner.
      */
-    function createMarketSale(address nftContractAddress, uint256 marketItemId) public payable  {
-        uint256 price = marketItemIdToMarketItem[marketItemId].price;
-        uint256 tokenId = marketItemIdToMarketItem[marketItemId].tokenId;
+    function createMarketSale(address nftContractAddress, uint marketItemId) public payable  {
+        uint price = marketItemIdToMarketItem[marketItemId].price;
+        uint tokenId = marketItemIdToMarketItem[marketItemId].tokenId;
         require(msg.value == price, "Please submit the asking price in order to continue");
 
         marketItemIdToMarketItem[marketItemId].owner = payable(msg.sender);
@@ -160,14 +160,14 @@ contract Marketplace  {
      * @dev Fetch non sold and non canceled market items
      */
     function fetchAvailableMarketItems() public view returns (MarketItem[] memory) {
-        uint256 itemsCount = _marketItemIds.current();
-        uint256 soldItemsCount = _tokensSold.current();
-        uint256 canceledItemsCount = _tokensCanceled.current();
-        uint256 availableItemsCount = itemsCount - soldItemsCount - canceledItemsCount;
+        uint itemsCount = _marketItemIds.current();
+        uint soldItemsCount = _tokensSold.current();
+        uint canceledItemsCount = _tokensCanceled.current();
+        uint availableItemsCount = itemsCount - soldItemsCount - canceledItemsCount;
         MarketItem[] memory marketItems = new MarketItem[](availableItemsCount);
 
-        uint256 currentIndex = 0;
-        for (uint256 i = 0; i < itemsCount; i++) {
+        uint currentIndex = 0;
+        for (uint i = 0; i < itemsCount; i++) {
             // Is this refactor better than the original implementation?
             // https://github.com/dabit3/polygon-ethereum-nextjs-marketplace/blob/main/contracts/Market.sol#L111
             // If so, is it better to use memory or storage here?
@@ -234,11 +234,11 @@ contract Marketplace  {
             compareStrings(_addressProperty, "seller") || compareStrings(_addressProperty, "owner"),
             "Parameter must be 'seller' or 'owner'"
         );
-        uint256 totalItemsCount = _marketItemIds.current();
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
+        uint totalItemsCount = _marketItemIds.current();
+        uint itemCount = 0;
+        uint currentIndex = 0;
 
-        for (uint256 i = 0; i < totalItemsCount; i++) {
+        for (uint i = 0; i < totalItemsCount; i++) {
             // Is it ok to assign this variable for better code legbility?
             // Is it better to use memory or storage in this case?
             MarketItem storage item = marketItemIdToMarketItem[i + 1];
@@ -249,7 +249,7 @@ contract Marketplace  {
 
         MarketItem[] memory items = new MarketItem[](itemCount);
 
-        for (uint256 i = 0; i < totalItemsCount; i++) {
+        for (uint i = 0; i < totalItemsCount; i++) {
             // Is it ok to assign this variable for better code legbility?
             // Is it better to use memory or storage in this case?
             MarketItem storage item = marketItemIdToMarketItem[i + 1];
@@ -262,7 +262,7 @@ contract Marketplace  {
         return items;
     }
 
-//    function verifyMarketItemBarcode(uint256 marketItemId , string memory barcode) private pure returns (bool) {
+//    function verifyMarketItemBarcode(uint marketItemId , string memory barcode) private pure returns (bool) {
 //    return compareStrings(marketItemIdToMarketItem[marketItemId].barcode, barcode);
 //    }
 }

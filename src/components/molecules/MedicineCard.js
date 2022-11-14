@@ -54,11 +54,7 @@ const useStyles = makeStyles({
   }
 })
 
-async function getAndSetListingFee (marketplaceContract, setListingFee) {
-  if (!marketplaceContract) return
-  const listingFee = await marketplaceContract.getListingFee()
-  setListingFee(ethers.utils.formatUnits(listingFee, 'ether'))
-}
+
 
 export default function MedicineCard ({ medicine, action, updateMedicine }) {
   const { setModalNFT, setIsModalOpen } = useContext(NFTModalContext)
@@ -72,7 +68,6 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
   const { name, description, image } = medicine
 
   useEffect(() => {
-    getAndSetListingFee(marketplaceContract, setListingFee)
   }, [])
 
   const actions = {
