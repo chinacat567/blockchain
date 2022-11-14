@@ -30,10 +30,10 @@ async function addNetwork (chain, account) {
 }
 
 export default function UnsupportedChain () {
-  const { account } = useContext(Web3Context)
+  const { metaMaskAccount } = useContext(Web3Context)
 
   const renderProviderText = () => {
-    if (!account) return 'Connect wallet'
+    if (!metaMaskAccount) return 'Connect wallet'
 
     const providerTextList = {
       Metamask: 'Add/Change to Goerli on Metamask',
@@ -49,7 +49,7 @@ export default function UnsupportedChain () {
       <Button
         variant='outlined'
         color='primary'
-        onClick={ () => addNetwork(chains.goerli, account) }
+        onClick={ () => addNetwork(chains.goerli, metaMaskAccount) }
         sx={{
           maxWidth: 600,
           margin: 'auto',

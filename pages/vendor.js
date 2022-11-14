@@ -1,4 +1,3 @@
-import { LinearProgress } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import InstallMetamask from '../src/components/molecules/InstallMetamask'
 import { Web3Context } from '../src/components/providers/Web3Provider'
@@ -8,21 +7,17 @@ import UnauthenticatedVendor from '../src/components/molecules/UnauthenticatedVe
 import VendorCard from '../src/components/molecules/VendorCard'
 
 export default function VendorDashboard () {
-  const [nfts, setNfts] = useState([])
-  const { account, marketplaceContract, nftContract, isReady, hasWeb3, network, isVerified, isVendor } = useContext(Web3Context)
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasWindowEthereum, setHasWindowEthereum] = useState(false)
+  const { web3Flag, blockchain, vendorFlag } = useContext(Web3Context)
+  const [ethereumFlag, setEthereumFlag] = useState(false)
 
   useEffect(() => {
-    setHasWindowEthereum(window.ethereum)
+    setEthereumFlag(window.ethereum)
   }, [])
 
-  if (!hasWindowEthereum) return <InstallMetamask/>
-  if (!hasWeb3) return <ConnectWalletMessage/>
-  if (!network) return <UnsupportedChain/>
-  if (!isVendor) return <UnauthenticatedVendor/>
+  if (!ethereumFlag) return <InstallMetamask/>
+  if (!web3Flag) return <ConnectWalletMessage/>
+  if (!blockchain) return <UnsupportedChain/>
+  if (!vendorFlag) return <UnauthenticatedVendor/>
 
-  return (
-        <VendorCard/>
-  )
+  return (<VendorCard/>)
 }

@@ -4,33 +4,28 @@ import { Web3Context } from '../src/components/providers/Web3Provider'
 import { LinearProgress } from '@mui/material'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
 import { mapAvailableMarketItems } from '../src/utils/nft'
-import axios from "axios";
-import {ethers} from "ethers";
-import Market from "../artifacts/contracts/Marketplace.sol/Marketplace.json";
-import NFT from "../artifacts/contracts/Medicine.sol/Medicine";
-import UnauthenticatedUser from "../src/components/molecules/UnauthenticatedUser";
+import UnauthenticatedUser from '../src/components/molecules/UnauthenticatedUser'
 
 export default function Home () {
-  const [nfts, setNfts] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { marketplaceContract, nftContract, isReady, network, account, isVerified } = useContext(Web3Context)
-
+  const { marketplaceContract, medicineContract, readyFlag, blockchain, verifiedFlag } = useContext(Web3Context)
+  const [medicines, setMedicines] = useState([])
+  const [loadingMedicines, setLoadingMedicines] = useState(true)
   useEffect(() => {
-    loadNFTs()
-  }, [isReady])
-  async function loadNFTs () {
-    if (!isReady) return
+    loadMedicines()
+  }, [readyFlag])
+  async function loadMedicines () {
+    if (!readyFlag) return
     const data = await marketplaceContract.fetchAvailableMarketItems()
-    const items = await Promise.all(data.map(mapAvailableMarketItems(nftContract)))
-    setNfts(items)
-    setIsLoading(false)
+    const items = await Promise.all(data.map(mapAvailableMarketItems(medicineContract)))
+    setMedicines(items)
+    setLoadingMedicines(false)
   }
 
-  if (!network) return <UnsupportedChain/>
-  if (!isVerified) return <UnauthenticatedUser/>
-  if (isLoading) return <LinearProgress/>
-  if (!isLoading && !nfts.length) return <h1>No Items for sale</h1>
+  if (!blockchain) return <UnsupportedChain/>
+  if (!verifiedFlag) return <UnauthenticatedUser/>
+  if (loadingMedicines) return <LinearProgress/>
+  if (!loadingMedicines && !medicines.length) return <h1>No Medicines For Sale</h1>
   return (
-    <NFTCardList nfts={nfts} setNfts={setNfts} withCreateNFT={false}/>
+    <NFTCardList nfts={medicines} setNfts={setMedicines} withCreateNFT={false}/>
   )
 }

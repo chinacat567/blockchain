@@ -62,7 +62,7 @@ async function getAndSetListingFee (marketplaceContract, setListingFee) {
 
 export default function NFTCard ({ nft, action, updateNFT }) {
   const { setModalNFT, setIsModalOpen } = useContext(NFTModalContext)
-  const { nftContract, marketplaceContract, hasWeb3 } = useContext(Web3Context)
+  const { medicineContract, marketplaceContract, web3Flag } = useContext(Web3Context)
   const [isHovered, setIsHovered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [listingFee, setListingFee] = useState('')
@@ -100,7 +100,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
 
   async function buyNft (nft) {
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
-    const transaction = await marketplaceContract.createMarketSale(nftContract.address, nft.marketItemId, {
+    const transaction = await marketplaceContract.createMarketSale(medicineContract.address, nft.marketItemId, {
       value: price
     })
     await transaction.wait()
@@ -108,13 +108,13 @@ export default function NFTCard ({ nft, action, updateNFT }) {
   }
 
   async function cancelNft (nft) {
-    const transaction = await marketplaceContract.cancelMarketItem(nftContract.address, nft.marketItemId)
+    const transaction = await marketplaceContract.cancelMarketItem(medicineContract.address, nft.marketItemId)
     await transaction.wait()
     updateNFT()
   }
 
   async function approveNft (nft) {
-    const approveTx = await nftContract.approve(marketplaceContract.address, nft.tokenId)
+    const approveTx = await medicineContract.approve(marketplaceContract.address, nft.tokenId)
     await approveTx.wait()
     updateNFT()
     return approveTx
@@ -135,7 +135,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
     const listingFee = await marketplaceContract.getListingFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
     console.log(nft.code)
-    const transaction = await marketplaceContract.createMarketItem(nftContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
+    const transaction = await marketplaceContract.createMarketItem(medicineContract.address, nft.tokenId, priceInWei, web3StringToBytes32(nft.code), { value: listingFee.toString() })
     await transaction.wait()
     console.log("t" + transaction.medicineTokenId)
     updateNFT()
@@ -193,7 +193,7 @@ export default function NFTCard ({ nft, action, updateNFT }) {
         <Button size="small" onClick={() => !isLoading && onClick(nft)}>
           {isLoading
             ? <CircularProgress size="20px" />
-            : hasWeb3 && actions[action].text
+            : web3Flag && actions[action].text
           }
         </Button>
       </CardActions>

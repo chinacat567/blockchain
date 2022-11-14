@@ -8,7 +8,7 @@ import theme from '../src/theme'
 import createEmotionCache from '../src/createEmotionCache'
 import Web3Provider from '../src/components/providers/Web3Provider'
 import { StylesProvider, createGenerateClassName } from '@mui/styles'
-import BaseLayout from '../src/components/layout/Base'
+import Dapp from '../src/components/layout/Dapp'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -29,9 +29,9 @@ export default function MyApp (props) {
           </Head>
           <ThemeProvider theme={theme}>
               <CssBaseline />
-              <BaseLayout>
+              <Dapp>
                 <Component {...pageProps} />
-              </BaseLayout>
+              </Dapp>
           </ThemeProvider>
         </CacheProvider>
       </Web3Provider>

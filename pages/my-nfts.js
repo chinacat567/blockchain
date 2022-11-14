@@ -10,7 +10,7 @@ import UnauthenticatedUser from "../src/components/molecules/UnauthenticatedUser
 
 export default function CreatorDashboard () {
   const [nfts, setNfts] = useState([])
-  const { account, marketplaceContract, nftContract, isReady, hasWeb3, network, isVerified } = useContext(Web3Context)
+  const { metaMaskAccount, marketplaceContract, medicineContract, readyFlag, web3Flag, initializeWeb3, verifiedFlag } = useContext(Web3Context)
   const [isLoading, setIsLoading] = useState(true)
   const [hasWindowEthereum, setHasWindowEthereum] = useState(false)
 
@@ -20,22 +20,22 @@ export default function CreatorDashboard () {
 
   useEffect(() => {
     loadNFTs()
-  }, [account, isReady])
+  }, [metaMaskAccount, readyFlag])
 
   async function loadNFTs () {
-    if (!isReady || !hasWeb3) return <></>
-    const myUniqueCreatedAndOwnedTokenIds = await getUniqueOwnedAndCreatedTokenIds(nftContract)
+    if (!readyFlag || !web3Flag) return <></>
+    const myUniqueCreatedAndOwnedTokenIds = await getUniqueOwnedAndCreatedTokenIds(medicineContract)
     const myNfts = await Promise.all(myUniqueCreatedAndOwnedTokenIds.map(
-      mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, nftContract, account)
+      mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)
     ))
     setNfts(myNfts)
     setIsLoading(false)
   }
 
   if (!hasWindowEthereum) return <InstallMetamask/>
-  if (!hasWeb3) return <ConnectWalletMessage/>
-  if (!network) return <UnsupportedChain/>
-  if (!isVerified) return <UnauthenticatedUser/>
+  if (!web3Flag) return <ConnectWalletMessage/>
+  if (!initializeWeb3) return <UnsupportedChain/>
+  if (!verifiedFlag) return <UnauthenticatedUser/>
   if (isLoading) return <LinearProgress/>
 
   return (

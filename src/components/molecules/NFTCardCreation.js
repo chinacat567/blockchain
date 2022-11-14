@@ -30,13 +30,12 @@ export default function NFTCardCreation ({ addNFTToList }) {
   const [, setFileUrl] = useState(defaultFileUrl)
   const classes = useStyles()
   const { register, handleSubmit, reset } = useForm()
-  const { nftContract } = useContext(Web3Context)
+  const { medicineContract } = useContext(Web3Context)
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState('No QR Code Found')
-  const [isVerifiedBarcode, setIsVerifiedBarcode] = useState(false)
 
   async function createNft (metadataUrl) {
-    const transaction = await nftContract.createNewMedicine(metadataUrl)
+    const transaction = await medicineContract.createNewMedicine(metadataUrl)
     const tx = await transaction.wait()
     console.log(tx.events[0])
     const event = tx.events[0]

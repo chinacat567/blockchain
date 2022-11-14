@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
   const classes = useStyles()
-  const { account, marketplaceContract, nftContract } = useContext(Web3Context)
+  const { metaMaskAccount, marketplaceContract, medicineContract } = useContext(Web3Context)
 
   async function updateNFT (index, tokenId) {
-    const updatedNFt = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, nftContract, account)(tokenId)
+    const updatedNFt = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
     setNfts(prevNfts => {
       const updatedNfts = [...prevNfts]
       updatedNfts[index] = updatedNFt
@@ -38,7 +38,7 @@ export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
   }
 
   async function addNFTToList (tokenId) {
-    const nft = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, nftContract, account)(tokenId)
+    const nft = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
     setNfts(prevNfts => [nft, ...prevNfts])
   }
 
@@ -47,15 +47,15 @@ export default function NFTCardList ({ nfts, setNfts, withCreateNFT }) {
       return <NFTCardCreation addNFTToList={addNFTToList}/>
     }
 
-    if (nft.owner === account && nft.marketItemId && !nft.hasMarketApproval) {
+    if (nft.owner === metaMaskAccount && nft.marketItemId && !nft.hasMarketApproval) {
       return <NFTCard nft={nft} action="approve" updateNFT={() => updateNFT(index, nft.tokenId)}/>
     }
 
-    if (nft.owner === account) {
+    if (nft.owner === metaMaskAccount) {
       return <NFTCard nft={nft} action="sell" updateNFT={() => updateNFT(index, nft.tokenId)}/>
     }
 
-    if (nft.seller === account && !nft.sold) {
+    if (nft.seller === metaMaskAccount && !nft.sold) {
       return <NFTCard nft={nft} action="cancel" updateNFT={() => updateNFT(index, nft.tokenId)} />
     }
 

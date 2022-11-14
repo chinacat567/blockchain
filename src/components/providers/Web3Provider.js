@@ -1,42 +1,40 @@
 import { createContext, useEffect, useState } from 'react'
 import Web3Modal from 'web3modal'
 import { ethers } from 'ethers'
-import NFT from '../../../artifacts/contracts/Medicine.sol/Medicine.json'
+import Medicine from '../../../artifacts/contracts/Medicine.sol/Medicine.json'
 import Market from '../../../artifacts/contracts/Marketplace.sol/Marketplace.json'
 import axios from 'axios'
 
-const contextDefaultValues = {
-  account: '',
-  network: 'goerli',
-  balance: 0,
-  connectWallet: () => {},
+const defaultValues = {
+  blockchain: 'goerli',
+  metaMaskAccount: '',
+  walletBalance: 0,
   marketplaceContract: null,
-  nftContract: null,
-  isReady: false,
-  hasWeb3: false,
-  isVerified: false,
-  isVendor: false
+  medicineContract: null,
+  web3Flag: false,
+  readyFlag: false,
+  verifiedFlag: false,
+  vendorFlag: false,
+  connectWallet: () => {}
 }
 
-const networkNames = {
+const networks = {
   goerli: 'GOERLI',
   unknown: 'LOCALHOST'
 }
 
-export const Web3Context = createContext(
-  contextDefaultValues
-)
+export const Web3Context = createContext(defaultValues)
 
 export default function Web3Provider ({ children }) {
-  const [hasWeb3, setHasWeb3] = useState(contextDefaultValues.hasWeb3)
-  const [account, setAccount] = useState(contextDefaultValues.account)
-  const [network, setNetwork] = useState(contextDefaultValues.network)
-  const [balance, setBalance] = useState(contextDefaultValues.balance)
-  const [marketplaceContract, setMarketplaceContract] = useState(contextDefaultValues.marketplaceContract)
-  const [nftContract, setNFTContract] = useState(contextDefaultValues.nftContract)
-  const [isReady, setIsReady] = useState(contextDefaultValues.isReady)
-  const [isVerified, setIsVerified] = useState(contextDefaultValues.isVerified)
-  const [isVendor, setIsVendor] = useState(contextDefaultValues.isVendor)
+  const [blockchain, setBlockchain] = useState(defaultValues.blockchain)
+  const [metaMaskAccount, setMetaMaskAccount] = useState(defaultValues.metaMaskAccount)
+  const [walletBalance, setWalletBalance] = useState(defaultValues.walletBalance)
+  const [marketplaceContract, setMarketplaceContract] = useState(defaultValues.marketplaceContract)
+  const [medicineContract, setMedicineContract] = useState(defaultValues.medicineContract)
+  const [web3Flag, setWeb3Flag] = useState(defaultValues.web3Flag)
+  const [readyFlag, setReadyFlag] = useState(defaultValues.readyFlag)
+  const [verifiedFlag, setVerifiedFlag] = useState(defaultValues.verifiedFlag)
+  const [vendorFlag, setVendorFlag] = useState(defaultValues.vendorFlag)
 
   useEffect(() => {
     initializeWeb3()
@@ -46,7 +44,7 @@ export default function Web3Provider ({ children }) {
 
   async function initializeWeb3WithoutSigner () {
     const alchemyProvider = new ethers.providers.AlchemyProvider(80001)
-    setHasWeb3(false)
+    setWeb3Flag(false)
     await getAndSetWeb3ContextWithoutSigner(alchemyProvider)
   }
 
@@ -60,7 +58,7 @@ export default function Web3Provider ({ children }) {
       let onAccountsChangedCooldown = false
       const web3Modal = new Web3Modal()
       const connection = await web3Modal.connect()
-      setHasWeb3(true)
+      setWeb3Flag(true)
       const provider = new ethers.providers.Web3Provider(connection, 'any')
       await getAndSetWeb3ContextWithSigner(provider)
 
@@ -72,7 +70,7 @@ export default function Web3Provider ({ children }) {
         const changedAddress = ethers.utils.getAddress(accounts[0])
         await validateUser(changedAddress)
         await validateVendor(changedAddress)
-        return getAndSetAccountAndBalance(provider, changedAddress)
+        return getAndsetMetaMaskAccountAndBalance(provider, changedAddress)
       }
 
       connection.on('accountsChanged', onAccountsChanged)
@@ -84,82 +82,82 @@ export default function Web3Provider ({ children }) {
   }
 
   async function getAndSetWeb3ContextWithSigner (provider) {
-    setIsReady(false)
+    setReadyFlag(false)
     const signer = provider.getSigner()
     const signerAddress = await signer.getAddress()
-    await getAndSetAccountAndBalance(provider, signerAddress)
+    await getAndsetMetaMaskAccountAndBalance(provider, signerAddress)
     const networkName = await getAndSetNetwork(provider)
     const success = await setupContracts(signer, networkName)
-    setIsReady(success)
+    setReadyFlag(success)
   }
 
   async function getAndSetWeb3ContextWithoutSigner (provider) {
-    setIsReady(false)
+    setReadyFlag(false)
     const networkName = await getAndSetNetwork(provider)
     const success = await setupContracts(provider, networkName)
-    setIsReady(success)
+    setReadyFlag(success)
   }
 
-  async function getAndSetAccountAndBalance (provider, address) {
-    setAccount(address)
+  async function getAndsetMetaMaskAccountAndBalance (provider, address) {
+    setMetaMaskAccount(address)
     await validateUser(address)
     await validateVendor(address)
     const signerBalance = await provider.getBalance(address)
     const balanceInEther = ethers.utils.formatEther(signerBalance)
-    setBalance(balanceInEther)
+    setWalletBalance(balanceInEther)
   }
 
   async function getAndSetNetwork (provider) {
     const { name: network } = await provider.getNetwork()
-    const networkName = networkNames[network]
-    setNetwork(networkName)
+    const networkName = networks[network]
+    setBlockchain(networkName)
     return networkName
   }
 
   async function setupContracts (signer, networkName) {
     if (!networkName) {
       setMarketplaceContract(null)
-      setNFTContract(null)
+      setMedicineContract(null)
       return false
     }
     const { data } = await axios(`/api/contractAddresses?network=${networkName}`)
     const marketplaceContract = new ethers.Contract(data.marketplaceAddress, Market.abi, signer)
     setMarketplaceContract(marketplaceContract)
-    const nftContract = new ethers.Contract(data.nftAddress, NFT.abi, signer)
-    setNFTContract(nftContract)
+    const nftContract = new ethers.Contract(data.nftAddress, Medicine.abi, signer)
+    setMedicineContract(nftContract)
     return true
   }
 
   async function validateUser (account) {
     const { data } = await axios(`/api/users?account=${account}`)
-    setIsVerified(data.exists)
+    setVerifiedFlag(data.exists)
   }
 
   async function validateVendor (account) {
     if (account === '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266') {
-      setIsVendor(true)
+      setVendorFlag(true)
     }
     else {
-      setIsVendor(false)
+      setVendorFlag(false)
     }
   }
 
   return (
-    <Web3Context.Provider
-      value={{
-        account,
-        marketplaceContract,
-        nftContract,
-        isReady,
-        network,
-        balance,
-        initializeWeb3,
-        hasWeb3,
-        isVerified,
-        isVendor
-      }}
-    >
-      {children}
-    </Web3Context.Provider>
+      <Web3Context.Provider
+          value={{
+            blockchain,
+            metaMaskAccount,
+            walletBalance,
+            marketplaceContract,
+            medicineContract,
+            web3Flag,
+            readyFlag,
+            verifiedFlag,
+            vendorFlag,
+            initializeWeb3
+          }}
+      >
+        {children}
+      </Web3Context.Provider>
   )
 };

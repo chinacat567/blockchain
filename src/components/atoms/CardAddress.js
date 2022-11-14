@@ -11,11 +11,11 @@ function getAddressText (address, account) {
 }
 
 export default function CardAddress ({ title, address }) {
-  const { account } = useContext(Web3Context)
+  const { metaMaskAccount } = useContext(Web3Context)
 
   return (
     <Typography variant="body2" color="text.secondary">
-      {title}: {getAddressText(address, account)}
+      {title}: {getAddressText(address, metaMaskAccount)}
     </Typography>
   )
 }

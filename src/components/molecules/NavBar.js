@@ -31,13 +31,16 @@ const pages = [
 ]
 
 const NavBar = () => {
-  const { account } = useContext(Web3Context)
+  const { metaMaskAccount } = useContext(Web3Context)
   const logo = 'CSE526'
 
   return (
     <AppBar position="static">
       <Container maxWidth="100%">
         <Toolbar disableGutters>
+          <Box sx={{ flexGrow: 1, display: 'flex' }}>
+            {pages.map(({ title, href }) => <NavItem title={title} href={href} key={title}/>)}
+          </Box>
           <Typography
             variant="h3"
             noWrap
@@ -46,10 +49,7 @@ const NavBar = () => {
           >
             {logo}
           </Typography>
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            {pages.map(({ title, href }) => <NavItem title={title} href={href} key={title}/>)}
-          </Box>
-          {account ? <ConnectedAccountAddress account={account}/> : <ConnectButton />}
+          {metaMaskAccount ? <ConnectedAccountAddress account={metaMaskAccount}/> : <ConnectButton />}
         </Toolbar>
       </Container>
     </AppBar>

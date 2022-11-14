@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import styles from '../styles/Home.module.css'
 import { Web3Context } from '../src/components/providers/Web3Provider'
 import AuthenticatedUser from '../src/components/molecules/AuthenticatedUser'
 import axios from 'axios'
 
 export default function Home () {
-  const { account, marketplaceContract, nftContract, isReady, hasWeb3, network, isVerified } = useContext(Web3Context)
+  const { metaMaskAccount, verifiedFlag } = useContext(Web3Context)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [governmentId, setGovernmentId] = useState('')
@@ -15,7 +15,7 @@ export default function Home () {
     formData.append('firstName', firstName)
     formData.append('lastName', lastName)
     formData.append('governmentId', governmentId)
-    formData.append('account', account)
+    formData.append('account', metaMaskAccount)
 
     const { data } = await axios.post('/api/signup', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     if (data) {
@@ -34,7 +34,7 @@ export default function Home () {
   function handleChangeGovernmentId (e) {
     setGovernmentId(e.target.value)
   }
-  if (isVerified) return <AuthenticatedUser/>
+  if (verifiedFlag) return <AuthenticatedUser/>
 
   return (
         <div className={styles.container}>
