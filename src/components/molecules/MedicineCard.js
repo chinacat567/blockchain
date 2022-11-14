@@ -95,7 +95,7 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
 
   async function buyMedicine (medicine) {
     const price = ethers.utils.parseUnits(medicine.price.toString(), 'ether')
-    const transaction = await marketplaceContract.createMarketSale(medicineContract.address, medicine.marketItemId, {
+    const transaction = await marketplaceContract.createTrade(medicineContract.address, medicine.marketItemId, {
       value: price
     })
     await transaction.wait()
@@ -103,7 +103,7 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
   }
 
   async function cancelMedicine (medicine) {
-    const transaction = await marketplaceContract.cancelMarketItem(medicineContract.address, medicine.marketItemId)
+    const transaction = await marketplaceContract.deleteItem(medicineContract.address, medicine.marketItemId)
     await transaction.wait()
     updateMedicine()
   }
@@ -127,9 +127,9 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
       return
     }
     setPriceError(false)
-    const listingFee = await marketplaceContract.getListingFee()
+    const listingFee = await marketplaceContract.getValue()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
-    const transaction = await marketplaceContract.createMarketItem(medicineContract.address, medicine.tokenId, priceInWei, web3StringToBytes32(medicine.code), { value: listingFee.toString() })
+    const transaction = await marketplaceContract.createItem(medicineContract.address, medicine.tokenId, priceInWei, web3StringToBytes32(medicine.code), { value: listingFee.toString() })
     await transaction.wait()
     updateMedicine()
     return transaction

@@ -15,7 +15,7 @@ export default function Home () {
   }, [readyFlag])
   async function loadMedicines () {
     if (!readyFlag) return
-    const data = await marketplaceContract.fetchAvailableMarketItems()
+    const data = await marketplaceContract.getAllItems()
     const items = await Promise.all(data.map(mapAvailableMarketItems(medicineContract)))
     setMedicines(items)
     setLoadingMedicines(false)

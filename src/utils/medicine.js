@@ -23,7 +23,7 @@ export function mapCreatedAndOwnedTokenIdsAsMarketItems (marketplaceContract, nf
     const metadata = await getTokenMetadataByTokenId(nftContract, tokenId)
     const approveAddress = await nftContract.getApproved(tokenId)
     const hasMarketApproval = approveAddress === marketplaceContract.address
-    const [foundMarketItem, hasFound] = await marketplaceContract.getLatestMarketItemByTokenId(tokenId)
+    const [foundMarketItem, hasFound] = await marketplaceContract.getItem(tokenId)
     const marketItem = hasFound ? foundMarketItem : {}
     return mapMarketItem(marketItem, metadata, tokenId, account, hasMarketApproval)
   }
