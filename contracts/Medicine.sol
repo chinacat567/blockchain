@@ -2,8 +2,6 @@
  Reference https://docs.openzeppelin.com/contracts/3.x/erc721
  */
 pragma solidity ^0.6.2;
-// pragma solidity ^0.8.4;
-
 
  import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";

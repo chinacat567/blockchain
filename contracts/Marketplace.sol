@@ -26,18 +26,8 @@ contract Marketplace  {
     }
 
 
-    event MarketItemCreated(
-        uint indexed marketItemId,
-        address indexed nftContract,
-        uint indexed tokenId,
-        address creator,
-        address seller,
-        address owner,
-        uint price,
-        bool sold,
-        bool canceled,
-        bytes32 barcode
-    );
+    event MarketItemCreated(uint marketItemId, address medicineContract, uint  tokenId, address creator, address seller,
+                            address owner, uint price, bool sold, bool canceled, bytes32 barcode);
     
 
     address payable private owner;

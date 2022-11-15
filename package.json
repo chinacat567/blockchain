@@ -1,5 +1,5 @@
 {
-  "name": "nft-marketplace",
+  "name": "cse526",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,12 +10,7 @@
     "node": "hardhat node",
     "deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
     "deploy:goerli": "hardhat run scripts/deploy.js --network goerli",
-    "deploy:mumbai": "hardhat run scripts/deploy.js --network mumbai",
-    "setup-marketplace:localhost": "hardhat run scripts/setupMarket.js --network localhost",
-    "setup-marketplace:mumbai": "hardhat run scripts/setupMarket.js --network mumbai",
-    "setup": "npm run deploy:localhost && npm run setup-marketplace:localhost",
-    "deploy": "hardhat run scripts/deploy.js",
-    "env": "hardhat run scripts/updateVercelEnviromentKeys.js --network mumbai"
+    "deploy": "hardhat run scripts/deploy.js"
   },
   "dependencies": {
     "@emotion/cache": "^11.7.1",
