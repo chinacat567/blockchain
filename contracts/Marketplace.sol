@@ -12,21 +12,9 @@ contract Marketplace  {
     Counters.Counter private _tokensSold;
     Counters.Counter private _tokensCanceled;
 
-    address payable private owner;
-
-    uint private listingFee = 0.045 ether;
-
-    mapping(uint => MarketItem) private _marketItemsLookup;
-
-//    struct Roles {
-//        address payable creator;
-//        address payable seller;
-//        address payable owner;
-//    }
-
     struct MarketItem {
         uint marketItemId;
-        address nftContractAddress;
+        address medicineContractAddress;
         uint tokenId;
         address payable creator;
         address payable seller;
@@ -36,6 +24,7 @@ contract Marketplace  {
         bool canceled;
         bytes32 barcode;
     }
+
 
     event MarketItemCreated(
         uint indexed marketItemId,
@@ -49,70 +38,65 @@ contract Marketplace  {
         bool canceled,
         bytes32 barcode
     );
+    
 
+    address payable private owner;
+
+    uint private fee = 0.045 ether;
+
+    mapping(uint => MarketItem) private _marketItemsLookup;
+
+    //    struct Roles {
+    //        address payable creator;
+    //        address payable seller;
+    //        address payable owner;
+    //    }
+
+    
     constructor()
-        public
+    public
     {
         owner = payable(msg.sender);
     }
 
-    function getValue()
-        public view
-        returns (uint)
+    function getFee()
+    public view
+    returns (uint)
     {
-        return listingFee;
+        return fee;
     }
 
-    function createItem(address nftContractAddress, uint tokenId, uint price, bytes32 barcode)
-        public payable
-        returns (uint)
+    function createItem(address medicineContractAddress, uint tokenId, uint price, bytes32 barcode)
+    public payable
+    returns (uint)
     {
         require(price > 0, "Price must be > 0");
-        require(msg.value == listingFee, "Need 0.75 ether for listing fee");
+        require(msg.value == fee, "Need 0.75 ether for listing fee");
         _marketItemIds.increment();
         uint marketItemId = _marketItemIds.current();
 
-        address creator = Medicine(nftContractAddress).getMedicineCreator(tokenId);
+        address creator = Medicine(medicineContractAddress).getMedicineCreator(tokenId);
 
-        _marketItemsLookup[marketItemId] = MarketItem(
-            marketItemId,
-            nftContractAddress,
-            tokenId,
-            payable(creator),
-            payable(msg.sender),
-            payable(address(0)),
-            price,
-            false,
-            false,
-            barcode
-        );
+        _marketItemsLookup[marketItemId] = MarketItem(marketItemId, medicineContractAddress, tokenId,
+                                                      payable(creator), payable(msg.sender), payable(address(0)),
+                                                      price, false, false, barcode);
 
-        IERC721(nftContractAddress).transferFrom(msg.sender, address(this), tokenId);
+        IERC721(medicineContractAddress).transferFrom(msg.sender, address(this), tokenId);
 
-        emit MarketItemCreated(
-            marketItemId,
-            nftContractAddress,
-            tokenId,
-            payable(creator),
-            payable(msg.sender),
-            payable(address(0)),
-            price,
-            false,
-            false,
-            barcode
-        );
+        emit MarketItemCreated(marketItemId, medicineContractAddress, tokenId, payable(creator),
+                               payable(msg.sender), payable(address(0)), price, false, false, barcode);
 
         return marketItemId;
     }
 
 
-    function deleteItem(address nftContractAddress, uint marketItemId) public payable  {
+    function deleteItem(address medicineContractAddress, uint marketItemId) public payable  {
         uint tokenId = _marketItemsLookup[marketItemId].tokenId;
         require(tokenId > 0, "Market item has to exist");
 
         require(_marketItemsLookup[marketItemId].seller == msg.sender, "Only seller can cancel market item");
 
-        IERC721(nftContractAddress).transferFrom(address(this), msg.sender, tokenId);
+        IERC721(medicineContractAddress).transferFrom(address(this), msg.sender, tokenId);
 
         _marketItemsLookup[marketItemId].owner = payable(msg.sender);
         _marketItemsLookup[marketItemId].canceled = true;
@@ -122,8 +106,8 @@ contract Marketplace  {
 
 
     function getItem(uint tokenId)
-        public view
-        returns (MarketItem memory, bool)
+    public view
+    returns (MarketItem memory, bool)
     {
         for (uint i = _marketItemIds.current(); i > 0; i--) {
             MarketItem memory item = _marketItemsLookup[i];
@@ -137,8 +121,8 @@ contract Marketplace  {
     }
 
 
-    function createTrade(address nftContractAddress, uint marketItemId)
-        public payable
+    function createTrade(address medicineContractAddress, uint marketItemId)
+    public payable
     {
         uint price = _marketItemsLookup[marketItemId].price;
         uint tokenId = _marketItemsLookup[marketItemId].tokenId;
@@ -148,17 +132,17 @@ contract Marketplace  {
         _marketItemsLookup[marketItemId].sold = true;
 
         _marketItemsLookup[marketItemId].seller.transfer(msg.value);
-        IERC721(nftContractAddress).transferFrom(address(this), msg.sender, tokenId);
+        IERC721(medicineContractAddress).transferFrom(address(this), msg.sender, tokenId);
 
         _tokensSold.increment();
 
-        payable(owner).transfer(listingFee);
+        payable(owner).transfer(fee);
     }
 
 
     function getAllItems()
-        public view
-        returns (MarketItem[] memory)
+    public view
+    returns (MarketItem[] memory)
     {
         uint availableItemsCount = _marketItemIds.current() - _tokensSold.current() - _tokensCanceled.current();
         MarketItem[] memory marketItems = new MarketItem[](availableItemsCount);
@@ -176,77 +160,55 @@ contract Marketplace  {
 
 
     function compareStrings(string memory a, string memory b)
-        public view
-        returns (bool)
+    public view
+    returns (bool)
     {
         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
     }
 
 
-    function getItemByRole(MarketItem memory item, string memory property)
-        private view
-        returns (address)
+    function addressLookup(MarketItem memory item, string memory property)
+    private view
+    returns (address)
     {
-        require(
-            compareStrings(property, "seller") || compareStrings(property, "owner"),
-            "Parameter must be 'seller' or 'owner'"
-        );
-
-        return compareStrings(property, "seller") ? item.seller : item.owner;
+        if (compareStrings(property, "seller")) {
+            return item.seller;
+        }
+        return item.owner;
+        
     }
 
 
-    function fetchSellingMarketItems()
-        public view
-        returns (MarketItem[] memory)
-    {
-        return getItemsByRoleAddress("seller");
-    }
-
-    function fetchOwnedMarketItems()
-        public view
-        returns (MarketItem[] memory)
-    {
-        return getItemsByRoleAddress("owner");
-    }
-
-
+    
     function getItemsByRoleAddress(string memory _addressProperty)
-        public
-        view
-        returns (MarketItem[] memory)
+    public
+    view
+    returns (MarketItem[] memory)
     {
-        require(
-            compareStrings(_addressProperty, "seller") || compareStrings(_addressProperty, "owner"),
-            "Parameter must be 'seller' or 'owner'"
-        );
-        uint totalItemsCount = _marketItemIds.current();
-        uint itemCount = 0;
-        uint currentIndex = 0;
-
-        for (uint i = 0; i < totalItemsCount; i++) {
-
-            MarketItem storage item = _marketItemsLookup[i + 1];
-            address addressPropertyValue = getItemByRole(item, _addressProperty);
-            if (addressPropertyValue != msg.sender) continue;
-            itemCount += 1;
+        uint size = 0;
+        for (uint i = 1; i <= _marketItemIds.current(); i++) {
+            MarketItem storage item = _marketItemsLookup[i];
+            address addressPropertyValue = addressLookup(item, _addressProperty);
+            if (addressPropertyValue == msg.sender) {
+                size += 1;
+            }
         }
 
-        MarketItem[] memory items = new MarketItem[](itemCount);
-
-        for (uint i = 0; i < totalItemsCount; i++) {
-
-            MarketItem storage item = _marketItemsLookup[i + 1];
-            address addressPropertyValue = getItemByRole(item, _addressProperty);
-            if (addressPropertyValue != msg.sender) continue;
-            items[currentIndex] = item;
-            currentIndex += 1;
+        MarketItem[] memory result = new MarketItem[](size);
+        
+        uint j = 0;
+        for (uint i = 1; i <= _marketItemIds.current(); i++) {
+            MarketItem storage item = _marketItemsLookup[i];
+            address addressPropertyValue = addressLookup(item, _addressProperty);
+            if (addressPropertyValue == msg.sender) {
+                result[j] = item;
+                j += 1;
+            }
         }
-
-        return items;
+        return result;
     }
 
-//    function verifyMarketItemBarcode(uint marketItemId , string memory barcode) private pure returns (bool) {
-//    return compareStrings(_marketItemsLookup[marketItemId].barcode, barcode);
-//    }
+    //    function verifyMarketItemBarcode(uint marketItemId , string memory barcode) private pure returns (bool) {
+    //    return compareStrings(_marketItemsLookup[marketItemId].barcode, barcode);
+    //    }
 }

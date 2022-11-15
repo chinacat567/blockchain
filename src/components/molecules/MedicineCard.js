@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles'
 import { Card, CardActions, CardContent, CardMedia, Button, Divider, Box, CircularProgress } from '@mui/material'
-import { NFTModalContext } from '../providers/MedicineModalProvider'
+import { ModalContext } from '../providers/MedicineModalProvider'
 import { Web3Context } from '../providers/Web3Provider'
 import MedicineDescription from '../atoms/MedicineDescription'
 import MedicinePrice from '../atoms/MedicinePrice'
@@ -57,11 +57,10 @@ const useStyles = makeStyles({
 
 
 export default function MedicineCard ({ medicine, action, updateMedicine }) {
-  const { setModalNFT, setIsModalOpen } = useContext(NFTModalContext)
+  const { setModal, setIsModalOpen } = useContext(ModalContext)
   const { medicineContract, marketplaceContract, web3Flag } = useContext(Web3Context)
   const [isHovered, setIsHovered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [listingFee, setListingFee] = useState('')
   const [priceError, setPriceError] = useState(false)
   const [newPrice, setPrice] = useState(0)
   const classes = useStyles()
@@ -95,14 +94,14 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
 
   async function buyMedicine (medicine) {
     const price = ethers.utils.parseUnits(medicine.price.toString(), 'ether')
-    const transaction = await marketplaceContract.createTrade(medicineContract.address, medicine.marketItemId, {
-      value: price
-    })
+    // console.log("p" + price.toString())
+    const transaction = await marketplaceContract.createTrade(medicineContract.address, medicine.marketItemId, { value: price })
     await transaction.wait()
     updateMedicine()
   }
 
   async function cancelMedicine (medicine) {
+    console.log("cane")
     const transaction = await marketplaceContract.deleteItem(medicineContract.address, medicine.marketItemId)
     await transaction.wait()
     updateMedicine()
@@ -127,8 +126,9 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
       return
     }
     setPriceError(false)
-    const listingFee = await marketplaceContract.getValue()
+    const listingFee = await marketplaceContract.getFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
+    // console.log("preice" + priceInWei)
     const transaction = await marketplaceContract.createItem(medicineContract.address, medicine.tokenId, priceInWei, web3StringToBytes32(medicine.code), { value: listingFee.toString() })
     await transaction.wait()
     updateMedicine()
@@ -136,7 +136,7 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
   }
 
   function handleCardImageClick () {
-    setModalNFT(medicine)
+    setModal(medicine)
     setIsModalOpen(true)
   }
 
@@ -175,7 +175,7 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
           </div>
           <div className={classes.priceContainer}>
             {action === 'sell'
-              ? <PriceTextField listingFee={listingFee} error={priceError} disabled={isLoading} onChange={e => setPrice(e.target.value)}/>
+              ? <PriceTextField error={priceError} disabled={isLoading} onChange={e => setPrice(e.target.value)}/>
               : <MedicinePrice medicine={medicine}/>
             }
           </div>

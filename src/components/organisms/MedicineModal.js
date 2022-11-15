@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { NFTModalContext } from '../providers/MedicineModalProvider'
+import { ModalContext } from '../providers/MedicineModalProvider'
 import Fade from '@mui/material/Fade'
 import Modal from '@mui/material/Modal'
 import Backdrop from '@mui/material/Backdrop'
@@ -16,13 +16,13 @@ const useStyles = makeStyles({
 
 export default function MedicineModal () {
   const classes = useStyles()
-  const { modalNFT, isModalOpen, setIsModalOpen } = useContext(NFTModalContext)
+  const { modal, isModalOpen, setIsModalOpen } = useContext(ModalContext)
 
   function handleCloseModal () {
     setIsModalOpen(false)
   }
 
-  if (!modalNFT) {
+  if (!modal) {
     return <></>
   }
 
@@ -31,7 +31,7 @@ export default function MedicineModal () {
       open={isModalOpen}
       onClose={handleCloseModal}
       className={classes.modal}
-      aria-labelledby="nft-modal-title"
+      aria-labelledby="modal-title"
       closeAfterTransition
       BackdropComponent={Backdrop}
       BackdropProps={{
@@ -40,7 +40,7 @@ export default function MedicineModal () {
     >
       <Fade in={isModalOpen}>
         <div>
-          <MedicineModalContent nft={modalNFT} onClick={handleCloseModal}/>
+          <MedicineModalContent item={modal} onClick={handleCloseModal}/>
         </div>
       </Fade>
     </Modal>

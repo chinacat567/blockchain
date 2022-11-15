@@ -31,14 +31,14 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function MedicineModalContent ({ nft, onClick }) {
+export default function MedicineModalContent ({ item, onClick }) {
   const classes = useStyles()
 
   return (
     <Paper className={classes.root}>
       <Grid container className={classes.mainContainer}>
         <Grid item className={classes.imageContainer}>
-          <Image src={nft.image} alt={nft.title} layout='fill' objectFit='contain' onClick={onClick}/>
+          <Image src={item.image} alt={item.title} layout='fill' objectFit='contain' onClick={onClick}/>
         </Grid>
       </Grid>
     </Paper>

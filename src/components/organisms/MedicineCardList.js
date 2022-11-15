@@ -29,10 +29,10 @@ export default function MedicineCardList ({ medicines, setMedicines, createMedic
   const { metaMaskAccount, marketplaceContract, medicineContract } = useContext(Web3Context)
 
   async function updateMedicine (index, tokenId) {
-    const updatedNFt = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
+    const newMedicines = await mapCreatedAndOwnedTokenIdsAsMarketItems(marketplaceContract, medicineContract, metaMaskAccount)(tokenId)
     setMedicines(prevMedicines => {
       const updatedMedicines = [...prevMedicines]
-      updatedMedicines[index] = updatedNFt
+      updatedMedicines[index] = newMedicines
       return updatedMedicines
     })
   }

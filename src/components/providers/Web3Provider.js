@@ -123,8 +123,8 @@ export default function Web3Provider ({ children }) {
     const { data } = await axios(`/api/contractAddresses?network=${networkName}`)
     const marketplaceContract = new ethers.Contract(data.marketplaceAddress, Market.abi, signer)
     setMarketplaceContract(marketplaceContract)
-    const nftContract = new ethers.Contract(data.nftAddress, Medicine.abi, signer)
-    setMedicineContract(nftContract)
+    const medicineContract = new ethers.Contract(data.medicineContractAddress, Medicine.abi, signer)
+    setMedicineContract(medicineContract)
     return true
   }
 

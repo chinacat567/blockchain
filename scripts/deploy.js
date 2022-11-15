@@ -2,12 +2,12 @@ const hre = require('hardhat')
 const dotenv = require('dotenv')
 const fs = require('fs')
 
-function replaceEnvContractAddresses (marketplaceAddress, nftAddress, networkName) {
+function replaceEnvContractAddresses (marketplaceAddress, medicineContractAddress, networkName) {
   const envFileName = '.env.local'
   const envFile = fs.readFileSync(envFileName, 'utf-8')
   const env = dotenv.parse(envFile)
   env[`MARKET_CONTRACT_ADDRESS_${networkName}`] = marketplaceAddress
-  env[`MEDICINE_CONTRACT_ADDRESS_${networkName}`] = nftAddress
+  env[`MEDICINE_CONTRACT_ADDRESS_${networkName}`] = medicineContractAddress
   const newEnv = Object.entries(env).reduce((env, [key, value]) => {
     return `${env}${key}=${value}\n`
   }, '')
@@ -20,14 +20,14 @@ async function main () {
   const Marketplace = await hre.ethers.getContractFactory('Marketplace')
   const marketplace = await Marketplace.deploy()
   await marketplace.deployed()
-  console.log('Marketplace deployed to:', marketplace.address)
+  console.log('Marketplace Contract deployed to:', marketplace.address)
 
-  const NFT = await hre.ethers.getContractFactory('Medicine')
-  const nft = await NFT.deploy(marketplace.address)
-  await nft.deployed()
-  console.log('Nft deployed to:', nft.address)
+  const medicine = await hre.ethers.getContractFactory('Medicine')
+  const medicineContract = await medicine.deploy(marketplace.address)
+  await medicineContract.deployed()
+  console.log('Medicine ERC721 Contract deployed to:', medicineContract.address)
 
-  replaceEnvContractAddresses(marketplace.address, nft.address, hre.network.name.toUpperCase())
+  replaceEnvContractAddresses(marketplace.address, medicineContract.address, hre.network.name.toUpperCase())
 }
 
 main()

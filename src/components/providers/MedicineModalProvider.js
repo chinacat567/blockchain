@@ -1,30 +1,30 @@
 import { createContext, useState } from 'react'
 
 const contextDefaultValues = {
-  modalNFT: undefined,
+  modal: undefined,
   isModalOpen: false,
-  setModalNFT: () => {},
+  setModal: () => {},
   setIsModalOpen: () => {}
 }
 
-export const NFTModalContext = createContext(
+export const ModalContext = createContext(
   contextDefaultValues
 )
 
 export default function MedicineModalProvider ({ children }) {
-  const [modalNFT, setModalNFT] = useState(contextDefaultValues.modalNFT)
+  const [modal, setModal] = useState(contextDefaultValues.modal)
   const [isModalOpen, setIsModalOpen] = useState(contextDefaultValues.isModalOpen)
 
   return (
-    <NFTModalContext.Provider
+    <ModalContext.Provider
       value={{
-        modalNFT,
+        modal,
         isModalOpen,
-        setModalNFT,
+        setModal,
         setIsModalOpen
       }}
     >
       {children}
-    </NFTModalContext.Provider>
+    </ModalContext.Provider>
   )
 };

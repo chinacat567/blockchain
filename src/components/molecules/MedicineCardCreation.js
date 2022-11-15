@@ -52,7 +52,7 @@ export default function MedicineCardCreation ({ insertMedicine }) {
     return new File([u8arr], filename, { type: mime })
   }
 
-  function createNFTFormDataFile (name, description, code, file) {
+  function createFormDataFromFile (name, description, code, file) {
     const formData = new FormData()
     formData.append('name', name)
     formData.append('description', description)
@@ -81,7 +81,7 @@ export default function MedicineCardCreation ({ insertMedicine }) {
         return
       }
       setIsLoading(true)
-      const formData = createNFTFormDataFile(name, description, data, file)
+      const formData = createFormDataFromFile(name, description, data, file)
       const metadataUrl = await uploadFileToIPFS(formData)
       const tokenId = await createMedicine(metadataUrl)
       insertMedicine(tokenId)

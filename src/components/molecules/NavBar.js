@@ -17,7 +17,7 @@ const pages = [
   },
   {
     title: 'My Medicines',
-    href: '/my-nfts'
+    href: '/myMedicines'
   },
   {
     title: 'Registration',
