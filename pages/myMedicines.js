@@ -6,7 +6,7 @@ import { Web3Context } from '../src/components/providers/Web3Provider'
 import { mapCreatedAndOwnedTokenIdsAsMarketItems, getAllTokenIds } from '../src/utils/medicine'
 import UnsupportedChain from '../src/components/molecules/UnsupportedChain'
 import ConnectWalletMessage from '../src/components/molecules/ConnectWalletMessage'
-import UnauthenticatedUser from '../src/components/molecules/UnauthenticatedUser';
+import UnauthenticatedUser from '../src/components/molecules/UnauthenticatedUser'
 
 export default function CreatorDashboard () {
   const [medicines, setMedicines] = useState([])

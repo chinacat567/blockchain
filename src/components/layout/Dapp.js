@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import NavBar from '../molecules/NavBar'
 import MedicineModal from '../organisms/MedicineModal'
 import MedicineModalProvider from '../providers/MedicineModalProvider'

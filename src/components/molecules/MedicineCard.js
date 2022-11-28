@@ -1,4 +1,3 @@
-
 import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles'
@@ -40,7 +39,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row'
   },
-  addessesContainer: {
+  addressesContainer: {
     margin: 'auto',
     width: '60%'
   },
@@ -53,8 +52,6 @@ const useStyles = makeStyles({
     padding: '0 16px 8px 16px'
   }
 })
-
-
 
 export default function MedicineCard ({ medicine, action, updateMedicine }) {
   const { setModal, setIsModalOpen } = useContext(ModalContext)
@@ -94,14 +91,12 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
 
   async function buyMedicine (medicine) {
     const price = ethers.utils.parseUnits(medicine.price.toString(), 'ether')
-    // console.log("p" + price.toString())
     const transaction = await marketplaceContract.createTrade(medicineContract.address, medicine.marketItemId, { value: price })
     await transaction.wait()
     updateMedicine()
   }
 
   async function cancelMedicine (medicine) {
-    console.log("cane")
     const transaction = await marketplaceContract.deleteItem(medicineContract.address, medicine.marketItemId)
     await transaction.wait()
     updateMedicine()
@@ -128,7 +123,6 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
     setPriceError(false)
     const listingFee = await marketplaceContract.getFee()
     const priceInWei = ethers.utils.parseUnits(newPrice, 'ether')
-    // console.log("preice" + priceInWei)
     const transaction = await marketplaceContract.createItem(medicineContract.address, medicine.tokenId, priceInWei, web3StringToBytes32(medicine.code), { value: listingFee.toString() })
     await transaction.wait()
     updateMedicine()
@@ -170,7 +164,7 @@ export default function MedicineCard ({ medicine, action, updateMedicine }) {
         <MedicineDescription description={description} />
         <Divider className={classes.firstDivider} />
         <Box className={classes.addressesAndPrice}>
-          <div className={classes.addessesContainer}>
+          <div className={classes.addressesContainer}>
             <CardAddresses medicine={medicine} />
           </div>
           <div className={classes.priceContainer}>

@@ -40,8 +40,6 @@ export default function Web3Provider ({ children }) {
     initializeWeb3()
   }, [])
 
-
-
   async function initializeWeb3WithoutSigner () {
     const alchemyProvider = new ethers.providers.AlchemyProvider(80001)
     setWeb3Flag(false)
@@ -136,8 +134,7 @@ export default function Web3Provider ({ children }) {
   async function validateVendor (account) {
     if (account === '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266') {
       setVendorFlag(true)
-    }
-    else {
+    } else {
       setVendorFlag(false)
     }
   }

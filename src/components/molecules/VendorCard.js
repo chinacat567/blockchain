@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { makeStyles } from '@mui/styles'
-import { Button, Card, CardActions, CardContent, CircularProgress, TextField } from '@mui/material'
+import { Button, Card, CardActions, CircularProgress } from '@mui/material'
 import axios from 'axios'
 import QrReader from 'react-qr-scanner'
 
@@ -26,7 +26,7 @@ export default function VendorCard () {
   const classes = useStyles()
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState('No QR Code Found')
-  const { register, handleSubmit, reset } = useForm()
+  const { handleSubmit, reset } = useForm()
 
   async function onSubmit () {
     try {
@@ -34,13 +34,11 @@ export default function VendorCard () {
       const formData = new FormData()
       console.log(data)
       formData.append('barcode', data)
-      const response  = await axios.post('/api/vendorupload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-        if (response) {
+      const response = await axios.post('/api/vendorupload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      if (response) {
         alert('Barcode Registered Successfully')
-
       }
-        reset()
-
+      reset()
     } catch (error) {
       console.log(error)
     } finally {
