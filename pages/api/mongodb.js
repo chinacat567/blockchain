@@ -15,6 +15,8 @@ if (!uri) {
   )
 }
 
+console.log('mongouri = ' + uri)
+
 if (!dbName) {
   throw new Error(
     'Please define the MONGODB_DB environment variable inside .env.local'
