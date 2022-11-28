@@ -1,4 +1,3 @@
-import { Button } from '@mui/material'
 import PageMessageBox from './PageMessageBox'
 
 export default function UnauthenticatedUser () {
