@@ -10,12 +10,11 @@ let cachedClient = null
 let cachedDb = null
 
 if (!uri) {
+  console.log('mongouri = ' + uri)
   throw new Error(
     'Please define the MONGODB_URI environment variable inside .env.local'
   )
 }
-
-console.log('mongouri = ' + uri)
 
 if (!dbName) {
   throw new Error(
