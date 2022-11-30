@@ -20,7 +20,7 @@ export default function Home () {
     const { data } = await axios.post('/api/signup', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     if (data) {
       alert('User Registered Successfully')
-      window.location.assign('http://localhost:3000/')
+      window.location.assign('https://cse526.vercel.app/')
     }
   }
   function handleChangeFirstName (e) {
