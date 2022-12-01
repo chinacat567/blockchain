@@ -61,7 +61,7 @@ contract Marketplace  {
     returns (uint)
     {
         require(price > 0, "Price must be > 0");
-        require(msg.value == fee, "Need 0.001 ether for listing fee");
+        require(msg.value == fee, "Need 0.001 goerli ether for listing fee");
         _marketItemIds.increment();
         uint marketItemId = _marketItemIds.current();
 
