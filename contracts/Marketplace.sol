@@ -32,7 +32,7 @@ contract Marketplace  {
 
     address payable private owner;
 
-    uint private fee = 0.045 ether;
+    uint private fee = 0.001 ether;
 
     mapping(uint => MarketItem) private _marketItemsLookup;
 
@@ -61,7 +61,7 @@ contract Marketplace  {
     returns (uint)
     {
         require(price > 0, "Price must be > 0");
-        require(msg.value == fee, "Need 0.75 ether for listing fee");
+        require(msg.value == fee, "Need 0.001 ether for listing fee");
         _marketItemIds.increment();
         uint marketItemId = _marketItemIds.current();
 
